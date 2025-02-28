@@ -1,2 +1,2 @@
 # BankingAE
-En este repositorio se desarrollara lo que es una Banking App.
+En este repositorio en el cual se desarrollara lo que es una Banking App.
