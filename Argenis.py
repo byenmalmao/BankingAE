@@ -10,4 +10,9 @@ def index():
 def Login():
    return render_template('login.html')
 
+
+@app.route('/registrar')
+def Registrar():
+   return render_template('registrar.html')
+
 app.run(host="0.0.0.0", port=50100, debug=True)
