@@ -1,59 +1,55 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Scotia Bank</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        /* Animación de fondo */
-        @keyframes gradientBackground {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .animated-background {
-            background: linear-gradient(270deg, #6ee7b7, #3b82f6, #9333ea);
-            background-size: 200% 200%;
-            animation: gradientBackground 10s ease infinite;
-        }
+      body {
+        font-family: "Poppins", sans-serif;
+      }
     </style>
-</head>
-<body class="flex justify-center items-center h-screen animated-background">
-    <div class="bg-white p-8 rounded-lg shadow-lg w-96 transform transition-all hover:scale-105">
-        <!-- Logo -->
-        <div class="flex justify-center mb-6">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Scotiabank.svg/1200px-Scotiabank.svg.png" 
-                 alt="Scotia Bank Logo" 
-                 class="w-32">
+  </head>
+  <body class="bg-gray-100 flex justify-center items-center h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md text-center">
+      <h2 class="text-2xl font-semibold text-red-600 mb-6">Inicio de Sesión</h2>
+      <form>
+        <div class="mb-4 text-left">
+          <label for="username" class="block text-gray-700 text-sm font-medium"
+            >Usuario</label
+          >
+          <input
+            type="text"
+            id="username"
+            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-400"
+            placeholder="Ingrese su usuario"
+            required
+          />
         </div>
-
-        <!-- Título -->
-        <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Iniciar Sesión</h2>
-
-        <!-- Formulario -->
-        <form method="POST" class="space-y-4">
-            <!-- Campo de usuario -->
-            <div>
-                <label class="block text-gray-700 text-sm font-medium mb-1">Usuario</label>
-                <input type="text" name="username" required
-                       class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-
-            <!-- Campo de contraseña -->
-            <div>
-                <label class="block text-gray-700 text-sm font-medium mb-1">Contraseña</label>
-                <input type="password" name="password" required
-                       class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-
-            <!-- Botón de ingreso -->
-            <button type="submit"
-                    class="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition duration-300">
-                Ingresar
-            </button>
-        </form>
+        <div class="mb-6 text-left">
+          <label for="password" class="block text-gray-700 text-sm font-medium"
+            >Contraseña</label
+          >
+          <input
+            type="password"
+            id="password"
+            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-400"
+            placeholder="Ingrese su contraseña"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          class="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition font-medium"
+        >
+          Iniciar sesión
+        </button>
+      </form>
     </div>
-</body>
+  </body>
 </html>
