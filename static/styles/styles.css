@@ -1,0 +1,39 @@
+body {
+  font-family: "Poppins", sans-serif;
+  height: 100%;
+}
+
+html {
+  height: 100%;
+}
+
+#login_box {
+  margin: 30px auto;
+  padding: 40px;
+}
+
+footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+footer .footer-section {
+  display: flex;
+  align-items: center;
+}
+
+footer .footer-section ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+footer .footer-section ul li {
+  margin-right: 20px; /* Separación entre los elementos de la lista */
+}
+
+footer .footer-section ul li:last-child {
+  margin-right: 0; /* Sin margen al último elemento */
+}

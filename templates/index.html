@@ -3,16 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <title>Home</title>
+    <title>Validación de Cédula</title>
+    <script>
+        function validarCedula(event) {
+            event.preventDefault();
+            let cedula = document.getElementById("cedula").value;
+
+            fetch("/registrar", {
+                method: "POST",
+                body: new URLSearchParams({ "cedula": cedula }),
+                headers: { "Content-Type": "application/x-www-form-urlencoded" }
+            })
+            .then(response => response.json())
+            .then(data => {
+                let resultado = document.getElementById("resultado");
+                if (data.mensaje) {
+                    resultado.innerHTML = `<p style="color:green;">✅ ${data.mensaje}: ${data.nombre}</p>`;
+                } else {
+                    resultado.innerHTML = `<p style="color:red;">❌ ${data.error}</p>`;
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                let resultado = document.getElementById("resultado");
+                resultado.innerHTML = `<p style="color:red;">❌ Error en la conexión</p>`;
+            });
+        }
+    </script>
 </head>
-<body class="flex justify-center items-center h-screen bg-gray-200">
-    <div class="bg-white p-6 rounded-lg shadow-lg">
-        <h1 class="text-3xl font-bold text-center">Bienvenido al Banco</h1>
-        <p class="text-center text-gray-600">Has iniciado sesión correctamente.</p>
-        <div class="mt-4 text-center">
-            <h1>Home en el Flask</h1>
-        </div>
-    </div>
+<body>
+    <h2>Validación de Cédula</h2>
+    <form onsubmit="validarCedula(event)">
+        <label for="cedula">Cédula:</label>
+        <input type="text" id="cedula" name="cedula" required>
+        <button type="submit">Validar</button>
+    </form>
+    <div id="resultado"></div>
 </body>
 </html>
