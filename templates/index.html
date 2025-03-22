@@ -1,43 +1,7 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Validación de Cédula</title>
-    <script>
-        function validarCedula(event) {
-            event.preventDefault();
-            let cedula = document.getElementById("cedula").value;
+{%  extends './base.html '%}
 
-            fetch("/registrar", {
-                method: "POST",
-                body: new URLSearchParams({ "cedula": cedula }),
-                headers: { "Content-Type": "application/x-www-form-urlencoded" }
-            })
-            .then(response => response.json())
-            .then(data => {
-                let resultado = document.getElementById("resultado");
-                if (data.mensaje) {
-                    resultado.innerHTML = `<p style="color:green;">✅ ${data.mensaje}: ${data.nombre}</p>`;
-                } else {
-                    resultado.innerHTML = `<p style="color:red;">❌ ${data.error}</p>`;
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                let resultado = document.getElementById("resultado");
-                resultado.innerHTML = `<p style="color:red;">❌ Error en la conexión</p>`;
-            });
-        }
-    </script>
-</head>
-<body>
-    <h2>Validación de Cédula</h2>
-    <form onsubmit="validarCedula(event)">
-        <label for="cedula">Cédula:</label>
-        <input type="text" id="cedula" name="cedula" required>
-        <button type="submit">Validar</button>
-    </form>
-    <div id="resultado"></div>
-</body>
-</html>
+{% block title %}Home{% endblock %}
+
+{% block body %}
+<h1>Holaaa</h1>
+{% endblock %}

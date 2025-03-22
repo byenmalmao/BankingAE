@@ -1,20 +1,69 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Mi Aplicación Flask{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-</head>
-<body>
-    <header>
-        <h1>Bienvenido a Mi Aplicación Flask</h1>
-    </header>
-    <main>
-        {% block content %}{% endblock %}
-    </main>
-    <footer>
-        <p>&copy; 2025 Mi Aplicación Flask</p>
-    </footer>
-</body>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Your website description here." />
+    <meta name="author" content="Your Name or Company Name" />
+    <title>{% block title %}{% endblock %}</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font: Poppins -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../static/styles/styles.css" />
+  </head>
+  <body class="font-poppins bg-gray-100" >
+    {% block body %}
+    <!-- Page content goes here -->
+    {% endblock %}
+    <footer class="bg-gray-100 py-6 w-full mt-auto">
+        <div class="container mx-auto flex justify-between items-center">
+          <!-- Logo -->
+          <div class="footer-section">
+            <img
+              src="../static/styles/file.svg"
+              alt="Fidebank Logo"
+              class="h-12 w-12"
+            />
+          </div>
+    
+          <!-- Navegación -->
+          <div class="footer-section">
+            <ul class="flex space-x-6">
+              <li>
+                <a href="#" class="text-black hover:text-gray-600">Contactanos</a>
+              </li>
+              <li>
+                <a href="#" class="text-black hover:text-gray-600">Seguridad</a>
+              </li>
+              <li><a href="#" class="text-black hover:text-gray-600">Legal</a></li>
+              <li>
+                <a href="#" class="text-black hover:text-gray-600">Privacidad</a>
+              </li>
+              <li>
+                <a href="#" class="text-black hover:text-gray-600">Accesibilidad</a>
+              </li>
+              <li>
+                <button
+                  class="text-black hover:text-gray-600"
+                  aria-label="Configurar Cookies"
+                >
+                  Configurar Cookies
+                </button>
+              </li>
+            </ul>
+          </div>
+    
+          <!-- Derechos de autor -->
+          <div class="footer-section">
+            <p class="text-gray-700">© Fidebank. All Rights Reserved.</p>
+          </div>
+        </div>
+      </footer>
+  </body>
+  
 </html>
