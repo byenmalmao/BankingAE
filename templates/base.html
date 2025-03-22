@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="../static/styles/styles.css" />
   </head>
   <body class="flex flex-col min-h-screen font-poppins bg-gray-100">
+
+    {% block header %}
     <header style="padding-bottom: 0rem" class="bg-white shadow py-4">
       <div class="container mx-auto flex justify-left">
         <img
@@ -36,9 +38,10 @@
         >
           idebank
         </h3>
+        
       </div>
     </header>
-    
+    {% endblock %}
     {% block body %}
     <!-- Page content goes here -->
     {% endblock %}

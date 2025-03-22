@@ -11,7 +11,21 @@
 
   <form action="/login" method="POST">
     <!-- CSRF Token for security -->
-   
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <br />
+    {% for message in messages %}
+    <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4 relative" role="alert">
+        <strong>{{ message }}</strong>
+        <button type="button" class="absolute top-0 right-0 p-2" aria-label="Close" onclick="this.parentElement.remove()">
+            <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
 
     <div class="mb-4 text-left">
       <label for="username" class="block text-gray-700 text-sm font-medium"

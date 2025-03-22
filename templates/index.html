@@ -1,7 +1,44 @@
 {%  extends './base.html '%}
 
 {% block title %}Home{% endblock %}
-
+{% block header %}
+<header style="padding-bottom: 0rem" class="bg-white shadow py-4">
+    <div class="container mx-auto flex justify-between items-center">
+      <!-- Logo y Nombre -->
+      <div class="flex items-center">
+        <img src="../static/styles/file.svg" alt="Fidebank Logo" class="h-12 w-auto" />
+        <h3 style="line-height: 5rem; font-size: 1.5rem; color: rgb(248 8 8);" class="font-semibold ml-4">
+          idebank
+        </h3>
+      </div>
+  
+      <!-- Menú de navegación -->
+      <nav>
+        <ul class="flex space-x-6">
+          <li><a href="index.html" class="text-black hover:text-red-600">Home</a></li>
+          <li><a href="all_user.html" class="text-black hover:text-red-600">All Users</a></li>
+          <li><a href="create_user.html" class="text-black hover:text-red-600">Create User</a></li>
+          <li><a href="transfer_money.html" class="text-black hover:text-red-600">Transfer Money</a></li>
+          <li><a href="transfer_log.html" class="text-black hover:text-red-600">Transaction Log</a></li>
+          <li><a href="http://aboutayush.c1.biz/" target="_blank" class="text-black hover:text-red-600">About me</a></li>
+          <li><a href="contact.html" class="text-black hover:text-red-600">Contact</a></li>
+        </ul>
+      </nav>
+  
+      <!-- Botón de Logout -->
+      <a class="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50" 
+         href="{{ url_for('logout') }}">
+        Logout
+      </a>
+    </div>
+  </header>
+  
+{% endblock %}
 {% block body %}
-<h1>Holaaa</h1>
+<div class="p-8">
+    <h1 class="text-3xl font-bold">Bienvenido a FideBank Sr. {{current_user.username}}</h1>
+    
+</div>
+
+
 {% endblock %}

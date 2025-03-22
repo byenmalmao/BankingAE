@@ -1,11 +1,12 @@
-from flask import Flask, request, render_template, jsonify, redirect, url_for, flash
+from flask import Flask, request, render_template, jsonify, redirect, url_for, flash, g
 from config import config
 from flask_mysqldb import MySQL
 from forms import LoginForm
+from flask_login import  LoginManager,login_user,login_required,logout_user
 
 from models.ModelUser import ModelUser
 
-from models.entities.User import User  
+from models.entitties.User import User  
 
 app = Flask(__name__)
 
@@ -13,17 +14,24 @@ app = Flask(__name__)
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'Bismuto888@#'
-app.config['MYSQL_DB'] = 'dbbankgm'
+app.config['MYSQL_DB'] = 'fidebank'
 
 app.secret_key = 'mysecretkey'
 
-mysql = MySQL(app)
 db= MySQL(app)
+# Cerrar la conexión a la base de datos después de cada solicitud
+@app.teardown_appcontext
+def teardown_db(exception):
+    if hasattr(g, 'db'):
+        g.db.close()
+
+login_manager = LoginManager(app)
 
 app.config.from_pyfile('config.py')
 
-# URL de la API gubernamental de validación de cédulas
-API_VALIDACION_CEDULA = "https://api.digital.gob.do/validar-cedula"
+@login_manager.user_loader
+def load_user(id):
+    return ModelUser.get_by_id(db, id)
 
 
 @app.route('/')
@@ -40,6 +48,7 @@ def login():
         logged_user = ModelUser.login(db, user)
         if logged_user != None:
             if logged_user.password == True:
+                login_user(logged_user)
                 return redirect(url_for('home'))
             else:
                 flash('Contraseña incorrectos')
@@ -50,6 +59,12 @@ def login():
      else:
          return render_template('auth/login.html')
 
+#Log Out
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
 
 # Página del formulario
 @app.route('/home')
@@ -58,13 +73,13 @@ def home():
 
 @app.route('/Perfil')
 def perfil():
-    return  redirect('C:\laragon\www\FideBank\index.php')
+    return  redirect('index.php')
 
 @app.route('/Registrar')
 def registrar():
     return render_template('registrar.html')
 
-'''''
+
 ##################################################################################
 # Ruta para crear un nuevo usuario
 @app.route('/create_user', methods=['GET', 'POST'])
@@ -74,7 +89,7 @@ def create_user():
         email = request.form['email']
         amount = request.form['amount']
 
-        db = get_db()
+        db = db()
         cursor = db.cursor()
 
         # Verificar si el email ya existe
@@ -93,7 +108,7 @@ def create_user():
 # Ruta para ver todos los usuarios
 @app.route('/all_users')
 def all_users():
-    db = get_db()
+    db = db()
     cursor = db.cursor(dictionary=True)
     cursor.execute("SELECT * FROM users")
     users = cursor.fetchall()
@@ -107,7 +122,7 @@ def transfer_money():
         to_id = request.form['to_id']
         amount = float(request.form['amount'])
 
-        db = get_db()
+        db = db()
         cursor = db.cursor(dictionary=True)
 
         # Obtener información del remitente y receptor
@@ -138,7 +153,7 @@ def transfer_money():
             flash('Transaction Successful', 'success')
             return redirect(url_for('index'))
 
-    db = get_db()
+    db = db()
     cursor = db.cursor(dictionary=True)
     cursor.execute("SELECT * FROM users")
     users = cursor.fetchall()
@@ -147,7 +162,7 @@ def transfer_money():
 # Ruta para ver el historial de transacciones
 @app.route('/transfer_log')
 def transfer_log():
-    db = get_db()
+    db = db()
     cursor = db.cursor(dictionary=True)
     cursor.execute("SELECT * FROM transaction")
     transactions = cursor.fetchall()
@@ -162,7 +177,7 @@ def contact():
         subject = request.form['subject']
         message = request.form['message']
 
-        db = get_db()
+        db = db()
         cursor = db.cursor()
         cursor.execute("INSERT INTO contact (name, email, subject, message) VALUES (%s, %s, %s, %s)",
                        (name, email, subject, message))
@@ -172,7 +187,6 @@ def contact():
         return redirect(url_for('contact'))
 
     return render_template('contact.html')
-'''
 ##################################################################################
 
 if __name__ == '__main__':

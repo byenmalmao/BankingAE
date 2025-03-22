@@ -1,4 +1,4 @@
-from .entities.User import User
+from .entitties.User import User
 
 
 class ModelUser():
@@ -23,7 +23,7 @@ class ModelUser():
     def get_by_id(self, db, id):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT idUsuario, username FROM user WHERE idUusario = {}".format(id)
+            sql = "SELECT idusuario, username FROM usuario WHERE idusuario = {}".format(id)
             cursor.execute(sql)
             row = cursor.fetchone()
             if row != None:
