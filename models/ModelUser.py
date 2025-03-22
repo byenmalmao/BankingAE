@@ -1,17 +1,33 @@
-
 from .entitties.User import User
+
+
 class ModelUser():
-    
+
     @classmethod
-    def login(self,db, username):
+    def login(self, db, user):
         try:
-            cursor=db.connect.cursor()
-            sql="SELECT idusuario, username, password, idcliente from usuario where username='{}'".format(username)
+            cursor = db.connection.cursor()
+            sql = """SELECT id, username, password  FROM usuario
+                    WHERE username = '{}'""".format(user.username)
             cursor.execute(sql)
-            row=cursor.fetchone()
-            
+            row = cursor.fetchone()
             if row != None:
-              user=User(row[0], row[1], User.check_password(row[2], user.password), row[3])
+                user = User(row[0], row[1], User.check_password(row[2], user.password))
+                return user
+            else:
+                return None
+        except Exception as ex:
+            raise Exception(ex)
+
+    @classmethod
+    def get_by_id(self, db, id):
+        try:
+            cursor = db.connection.cursor()
+            sql = "SELECT id, username FROM user WHERE id = {}".format(id)
+            cursor.execute(sql)
+            row = cursor.fetchone()
+            if row != None:
+                return User(row[0], row[1], None, row[2])
             else:
                 return None
         except Exception as ex:

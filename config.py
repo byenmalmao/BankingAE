@@ -6,9 +6,10 @@ class DevelopmentConfig(Config):
     DEBUG = True
     MYSQL_HOST = 'localhost'
     MYSQL_USER = 'root'
-    MYSQL_PASSWORD = '' 
-    MYSQL_DB = 'fidebank'
+    MYSQL_PASSWORD = 'Bismuto888@#' 
+    MYSQL_DB = 'dbbankgm'
 
 config= {
     'development': DevelopmentConfig
 }
+
