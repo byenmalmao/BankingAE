@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>CONTACT ME</h1>
+<div class="contact">
+    <div class="contactcontanner">
+        <div class="contanner">
+            <div class="heading">
+                <div class="icon"><i class="far fa-map"></i></div>
+                <div class="info">
+                    <p>Address : </p>
+                    <p id="contactinfo">The Hangar, Nus Enterprise 21 Heng Mui Keng Terrance, Singapore, 119613</p>
+                </div>
+            </div>
+
+            <div class="heading">
+                <div class="icon"><i class="fas fa-phone-alt"></i></div>
+                <div class="info">
+                    <p>Phone : </p>
+                    <p id="contactinfo">+65-8402-8590</p>
+                </div>
+            </div>
+
+            <div class="heading">
+                <div class="icon"><i class="far fa-envelope"></i></div>
+                <div class="info">
+                    <p>Email : </p>
+                    <p id="contactinfo">info@thesparksfoundation.sg</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="messageform">
+            <div class="form">
+                <form method="POST">
+                    <input type="text" name="name" placeholder="NAME" required>
+                    <input type="email" name="email" placeholder="EMAIL" required>
+                    <input type="text" name="subject" placeholder="SUBJECT" required>
+                    <textarea name="message" id="inputbox" cols="30" rows="5" placeholder="MESSAGE" required></textarea>
+                    <button type="submit">SEND MESSAGE</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

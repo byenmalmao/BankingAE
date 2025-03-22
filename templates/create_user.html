@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="create">
+    <h1>CREATE USER</h1>
+    <div class="createUser">
+        <div class="userimg">
+            <img src="{{ url_for('static', filename='images/undraw_male_avatar_323b.svg') }}" alt="user image">
+        </div>
+        <div class="userdata">
+            <form method="POST">
+                <input id="name" type="text" placeholder="NAME" name="name" required>
+                <input id="email" type="email" placeholder="EMAIL" name="email" required>
+                <input id="amount" type="number" placeholder="AMOUNT" name="amount" required>
+                <button type="submit">ADD USER</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

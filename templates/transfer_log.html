@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>TRANSACTION LOG</h1>
+<div class="all_users" style="height: 500px;">
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>SENDER</th>
+            <th>RECEIVER</th>
+            <th>AMOUNT</th>
+            <th>DATE & TIME</th>
+        </tr>
+        {% for transaction in transactions %}
+        <tr>
+            <td>{{ transaction.id }}</td>
+            <td>{{ transaction.sender }}</td>
+            <td>{{ transaction.receiver }}</td>
+            <td>{{ transaction.amount }}</td>
+            <td>{{ transaction.time }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

@@ -1,4 +1,4 @@
-from .entitties.User import User
+from .entities.User import User
 
 
 class ModelUser():
@@ -7,7 +7,7 @@ class ModelUser():
     def login(self, db, user):
         try:
             cursor = db.connection.cursor()
-            sql = """SELECT id, username, password  FROM usuario
+            sql = """SELECT idUsuario, username, password  FROM usuario
                     WHERE username = '{}'""".format(user.username)
             cursor.execute(sql)
             row = cursor.fetchone()
@@ -23,11 +23,11 @@ class ModelUser():
     def get_by_id(self, db, id):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT id, username FROM user WHERE id = {}".format(id)
+            sql = "SELECT idUsuario, username FROM user WHERE idUusario = {}".format(id)
             cursor.execute(sql)
             row = cursor.fetchone()
             if row != None:
-                return User(row[0], row[1], None, row[2])
+                return User(row[0], row[1], None)
             else:
                 return None
         except Exception as ex:

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>TRANSFER MONEY</h1>
+<div class="all_users" style="height: 500px;">
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>NAME</th>
+            <th>EMAIL</th>
+            <th>BALANCE</th>
+            <th>OPERATION</th>
+        </tr>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.amount }}</td>
+            <td id="transfer"><a href="{{ url_for('transfer_money', id=user.id) }}"><button type="button">TRANSFER</button></a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

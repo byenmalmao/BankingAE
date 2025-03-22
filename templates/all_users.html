@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>ALL USERS</h1>
+<div class="all_users" style="height: 500px;">
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>NAME</th>
+            <th>EMAIL</th>
+            <th>BALANCE</th>
+        </tr>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.amount }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
