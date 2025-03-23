@@ -11,6 +11,7 @@
 
   <form action="/login" method="POST">
     <!-- CSRF Token for security -->
+     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     {% with messages = get_flashed_messages() %}
     {% if messages %}
     <br />

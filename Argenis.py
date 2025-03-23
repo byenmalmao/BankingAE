@@ -2,6 +2,7 @@ from flask import Flask, request, render_template, jsonify, redirect, url_for, f
 from config import config
 from flask_mysqldb import MySQL
 from forms import LoginForm
+from flask_wtf.csrf import CSRFProtect
 from flask_login import  LoginManager,login_user,login_required,logout_user
 
 from models.ModelUser import ModelUser
@@ -19,6 +20,9 @@ app.config['MYSQL_DB'] = 'fidebank'
 app.secret_key = 'mysecretkey'
 
 db= MySQL(app)
+
+csrf=CSRFProtect(app)
+
 # Cerrar la conexión a la base de datos después de cada solicitud
 @app.teardown_appcontext
 def teardown_db(exception):
@@ -65,6 +69,16 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+@app.route('/protected')
+@login_required
+def protected():
+    return 'Protected'
+
+def status_401(error):
+    return redirect(url_for('login'))
+
+def status_404(error):
+    return '404'
 
 # Página del formulario
 @app.route('/home')
@@ -191,4 +205,7 @@ def contact():
 
 if __name__ == '__main__':
     app.config.from_object(config['development'])
+    csrf.init_app(app)
+    app.register_error_handler(401, status_401)
+    app.register_error_handler(404, status_404)
     app.run(host="0.0.0.0", port=50100, debug=True)
