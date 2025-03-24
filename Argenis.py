@@ -148,7 +148,7 @@ def register():
 
 ##################################################################################
 # Ruta para crear un nuevo usuario
-@app.route('/create_user', methods=['GET', 'POST'])  #Se crea automatico Argenis Cambios 
+@app.route('/create_user', methods=['GET', 'POST'])  #Se crea automatico Argenis Cambios . 
 def create_user():
     if request.method == 'POST':
         name = request.form['name']
