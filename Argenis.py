@@ -90,8 +90,9 @@ def perfil():
     return  redirect('index.php')
 
 import random
+import hashlib  # Para encriptar la contraseña
 
-@app.route('/registrar', methods=['GET', 'POST']) #Argenis Cambios 
+@app.route('/registrar', methods=['GET', 'POST'])  #Argenis
 def register():
     if request.method == 'POST':
         nombre = request.form['nombre']
@@ -104,6 +105,9 @@ def register():
 
         # Generar una contraseña aleatoria de 6 dígitos
         password_numerica = str(random.randint(100000, 999999))
+
+        # Encriptar la contraseña antes de guardarla
+        password_encriptada = hashlib.sha256(password_numerica.encode()).hexdigest()
 
         cursor = db.connection.cursor()
 
@@ -119,14 +123,14 @@ def register():
             # Obtener el último ID insertado (IdCliente)
             cliente_id = cursor.lastrowid
 
-            # Insertar usuario con el mismo nombre y la contraseña generada (sin encriptar)
+            # Insertar usuario con el mismo nombre y la contraseña generada
             cursor.execute("""
                 INSERT INTO usuario (username, password)
                 VALUES (%s, %s)
-            """, (nombre, password_numerica))
+            """, (nombre, password_encriptada))
 
             db.connection.commit()
-            flash(f'Cliente registrado correctamente')
+
             flash(f'Usuario creado: {nombre} - Contraseña: {password_numerica}', 'success')
             return redirect(url_for('login'))
 
@@ -138,6 +142,7 @@ def register():
             cursor.close()
 
     return render_template('registrar.html')
+
 
 
 
