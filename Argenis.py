@@ -12,9 +12,9 @@ from models.entitties.User import User
 app = Flask(__name__)
 
 # Configuración de la base de datos
-app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_HOST'] = 'localhost'     #Recordar cambiar con sus datos 
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'Bismuto888@#'
+app.config['MYSQL_PASSWORD'] = 'tdohmgrj'
 app.config['MYSQL_DB'] = 'fidebank'
 
 app.secret_key = 'mysecretkey'
@@ -89,14 +89,61 @@ def home():
 def perfil():
     return  redirect('index.php')
 
-@app.route('/Registrar')
-def registrar():
+import random
+
+@app.route('/registrar', methods=['GET', 'POST']) #Argenis Cambios 
+def register():
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        apellido = request.form['apellido']
+        documento = request.form['documento']
+        correo = request.form['correo']
+        telefono = request.form['telefono']
+        direccion = request.form['direccion']
+        estado = request.form['estado']
+
+        # Generar una contraseña aleatoria de 6 dígitos
+        password_numerica = str(random.randint(100000, 999999))
+
+        cursor = db.connection.cursor()
+
+        try:
+            # Insertar nuevo cliente
+            cursor.execute("""
+                INSERT INTO cliente (Nombre, Apellido, DocumentoIdentidad, Correo, Telefono, Direccion, Estado)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """, (nombre, apellido, documento, correo, telefono, direccion, estado))
+            
+            db.connection.commit()
+
+            # Obtener el último ID insertado (IdCliente)
+            cliente_id = cursor.lastrowid
+
+            # Insertar usuario con el mismo nombre y la contraseña generada (sin encriptar)
+            cursor.execute("""
+                INSERT INTO usuario (username, password)
+                VALUES (%s, %s)
+            """, (nombre, password_numerica))
+
+            db.connection.commit()
+            flash(f'Cliente registrado correctamente')
+            flash(f'Usuario creado: {nombre} - Contraseña: {password_numerica}', 'success')
+            return redirect(url_for('login'))
+
+        except Exception as e:
+            db.connection.rollback()
+            flash(f'Error al registrar cliente: {str(e)}', 'error')
+
+        finally:
+            cursor.close()
+
     return render_template('registrar.html')
+
 
 
 ##################################################################################
 # Ruta para crear un nuevo usuario
-@app.route('/create_user', methods=['GET', 'POST'])
+@app.route('/create_user', methods=['GET', 'POST'])  #Se crea automatico Argenis Cambios 
 def create_user():
     if request.method == 'POST':
         name = request.form['name']
