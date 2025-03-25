@@ -2,6 +2,7 @@ from flask import Flask, request, render_template, jsonify, redirect, url_for, f
 from config import config
 from flask_mysqldb import MySQL
 from forms import LoginForm
+from werkzeug.security import generate_password_hash
 from flask_wtf.csrf import CSRFProtect
 from flask_login import  LoginManager,login_user,login_required,logout_user
 
@@ -107,7 +108,7 @@ def register():
         password_numerica = str(random.randint(100000, 999999))
 
         # Encriptar la contraseña antes de guardarla
-        password_encriptada = hashlib.sha256(password_numerica.encode()).hexdigest()
+        password_encriptada = generate_password_hash(password_numerica)
 
         cursor = db.connection.cursor()
 
