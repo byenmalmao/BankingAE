@@ -1,10 +1,10 @@
-{% extends './base.html' %} 
+{% extends './base.html' %}
 {% block title %}Registro de Cliente{% endblock %}
 
 {% block body %}
-<div class="min-h-screen flex items-center justify-center bg-gray-100"> 
-  <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-lg">
-    <h2 class="text-2xl font-bold text-red-600 mb-4 text-center">Registro de Cliente</h2>
+<div class="min-h-screen bg-gray-100 p-8"> 
+  <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-4xl mx-auto">
+    <h2 class="text-2xl font-bold text-red-600 mb-6 text-center">Registro de Cliente</h2>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
@@ -16,50 +16,54 @@
       {% endif %}
     {% endwith %}
 
-    <form action="{{ url_for('register') }}" method="POST">
+    <form action="{{ url_for('register') }}" method="POST" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
-      <div class="mb-3">
-        <label class="block font-medium text-gray-700">Nombre</label>
-        <input type="text" name="nombre" class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-red-400" required />
+    
+      <div class="flex flex-col">
+        <label class="font-medium text-gray-700">Nombre</label>
+        <input type="text" name="nombre" class="w-full px-4 py-2 border rounded-md hover:border-red-500 focus:ring-2 focus:ring-red-400 transition" required />
       </div>
-
-      <div class="mb-3">
-        <label class="block font-medium text-gray-700">Apellido</label>
-        <input type="text" name="apellido" class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-red-400" required />
+    
+      <div class="flex flex-col">
+        <label class="font-medium text-gray-700">Apellido</label>
+        <input type="text" name="apellido" class="w-full px-4 py-2 border rounded-md hover:border-red-500 focus:ring-2 focus:ring-red-400 transition" required />
       </div>
-
-      <div class="mb-3">
-        <label class="block font-medium text-gray-700">Documento de Identidad</label>
-        <input type="text" name="documento" class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-red-400" required />
+    
+      <div class="flex flex-col">
+        <label class="font-medium text-gray-700">Documento de Identidad</label>
+        <input type="text" name="documento" id="cedula" class="w-full px-4 py-2 border rounded-md hover:border-red-500 focus:ring-2 focus:ring-red-400 transition" required onkeyup="valida()" />
+        <small id="result" class="text-sm font-medium"></small>
       </div>
-
-      <div class="mb-3">
-        <label class="block font-medium text-gray-700">Correo</label>
-        <input type="email" name="correo" class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-red-400" required />
+    
+      <div class="flex flex-col">
+        <label class="font-medium text-gray-700">Correo</label>
+        <input type="email" name="correo" class="w-full px-4 py-2 border rounded-md hover:border-red-500 focus:ring-2 focus:ring-red-400 transition" required />
       </div>
-
-      <div class="mb-3">
-        <label class="block font-medium text-gray-700">Teléfono</label>
-        <input type="text" name="telefono" class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-red-400" />
+    
+      <div class="flex flex-col">
+        <label class="font-medium text-gray-700">Teléfono</label>
+        <input type="text" name="telefono" class="w-full px-4 py-2 border rounded-md hover:border-red-500 focus:ring-2 focus:ring-red-400 transition" />
       </div>
-
-      <div class="mb-3">
-        <label class="block font-medium text-gray-700">Dirección</label>
-        <textarea name="direccion" class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-red-400"></textarea>
+    
+      <div class="flex flex-col">
+        <label class="font-medium text-gray-700">Dirección</label>
+        <textarea name="direccion" class="w-full px-4 py-2 border rounded-md hover:border-red-500 focus:ring-2 focus:ring-red-400 transition"></textarea>
       </div>
-
-      <div class="mb-4">
-        <label class="block font-medium text-gray-700">Estado</label>
-        <select name="estado" class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-red-400">
+    
+      <div class="flex flex-col">
+        <label class="font-medium text-gray-700">Estado</label>
+        <select name="estado" class="w-full px-4 py-2 border rounded-md hover:border-red-500 focus:ring-2 focus:ring-red-400 transition">
           <option value="Activo">Activo</option>
           <option value="Inactivo">Inactivo</option>
         </select>
       </div>
 
-      <button type="submit" class="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition">
-        Registrar
-      </button>
+      <!-- Botón de envío centrado -->
+      <div class="col-span-1 sm:col-span-2 flex justify-center">
+        <button type="submit" class="bg-red-600 text-white py-2 px-6 rounded-md hover:bg-red-700 transition">
+          Registrar
+        </button>
+      </div>
     </form>
 
     <div class="mt-4 text-center">
@@ -68,3 +72,38 @@
   </div>
 </div>
 {% endblock %}
+
+{% block script %}
+<script>                      
+  function valida() {
+    let cedula = document.getElementById('cedula').value;
+    let c = cedula.split('');
+    let v = [1,2,1,2,1,2,1,2,1,2];
+    let result = 0;
+    
+    if (c.length !== 11) {
+      document.getElementById('result').innerHTML = '<p class="text-red-600">Cédula Incorrecta</p>';
+      return;
+    }
+    
+    for (let i = 0; i < 10; i++) {  
+      let up = c[i] * v[i];
+      let oc = up >= 10 ? up.toString().split('').reduce((a, b) => a + parseInt(b), 0) : up;
+      result += oc;   
+    }
+    
+    let dp = result;
+    let ac = parseInt(dp.toString().slice(0, -1) + '0');
+    let uj = (ac / 10) * 10;
+    dp = uj < dp ? (uj + 10) - dp : uj - dp;
+
+    if (c[10] == dp) {             
+      document.getElementById('result').innerHTML = '<p class="text-green-600">Cédula Correcta</p>';
+    } else {
+      document.getElementById('result').innerHTML = '<p class="text-red-600">Cédula Incorrecta</p>';
+    }
+  }                    
+</script>
+{% endblock %}
+
+
