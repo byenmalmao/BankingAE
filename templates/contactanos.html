@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Contáctanos{% endblock %}
+
+{% block body %}
+<div class="container mx-auto py-10 px-6">
+    <h1 class="text-3xl font-bold text-center text-gray-800">Conócenos🌟</h1>
+    <p class="text-center text-gray-600 mb-6">Somos estudiantes apasionados por la tecnología y el desarrollo de software.</p>
+
+    <div class="grid md:grid-cols-2 gap-8">
+        <!-- Estudiante 1 -->
+        <div class="bg-white p-6 rounded-lg shadow-md text-center">
+            <img src="../static/styles/Estudiante12.jpg" alt="Estudiante 1" class="w-40 h-40 mx-auto rounded-full mb-4">
+            <h2 class="text-xl font-semibold">Argenis Torres</h2>
+            <p class="text-gray-600">Estudiante de Ingeniería en Sistemas</p>
+            <p class="text-gray-600">📞829-805-7226</p>
+            <a href="https://www.instagram.com/arg_torres/" target="_blank" class="text-red-600 font-bold underline">Instagram</a>
+        </div>
+
+        <!-- Estudiante 2 -->
+        <div class="bg-white p-6 rounded-lg shadow-md text-center">
+            <img src="../static/styles/enmanuel.jpg" alt="Estudiante 2" class="w-40 h-40 mx-auto rounded-full mb-4">
+            <h2 class="text-xl font-semibold">Enmanuel Gonzalez</h2>
+            <p class="text-gray-600">Estudiante de Ingeniería en Sistemas</p>
+            <p class="text-gray-600">📞809-297-7420</p>
+            <a href="https://www.instagram.com/enmagb_/" target="_blank" class="text-red-600 font-bold underline">Instagram</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
