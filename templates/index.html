@@ -15,12 +15,12 @@
       <!-- Menú de navegación -->
       <nav>
         <ul class="flex space-x-6">
-          <li><a href="index.html" class="text-black hover:text-red-600">Inicio</a></li>
-          <li><a href="all_user.html" class="text-black hover:text-red-600">Todas tus Cuentas</a></li>
+          <li><a href="{{ url_for('home') }}" class="text-black hover:text-red-600">Inicio</a></li>
+          <li><a href="{{ url_for('cuentas') }}" class="text-black hover:text-red-600">Todas tus Cuentas</a></li>
     <!-- <li><a href="create_user.html" class="text-black hover:text-red-600">Create User</a></li> -->
-          <li><a href="transfer_money.html" class="text-black hover:text-red-600">Transferencias</a></li>
-          <li><a href="transfer_log.html" class="text-black hover:text-red-600">Movimientos</a></li>
-          <li><a href="http://aboutayush.c1.biz/" target="_blank" class="text-black hover:text-red-600">Acerca de Nosotros</a></li>
+          <li><a href="{{ url_for('transferir') }}" class="text-black hover:text-red-600">Transferencias</a></li>
+          <li><a href="{{ url_for('actividad') }}"  class="text-black hover:text-red-600">Movimientos</a></li>
+          <li><a href="{{ url_for('soporte') }}"  class="text-black hover:text-red-600">Acerca de Nosotros</a></li>
     <!--  <li><a href="contact.html" class="text-black hover:text-red-600">Contact</a></li> -->
         </ul>
       </nav>
@@ -35,9 +35,16 @@
   
 {% endblock %}
 {% block body %}
-<div class="p-8">
-    <h1 class="text-3xl font-bold">Bienvenido a FideBank Sr. {{current_user.username}}</h1>
-    
+<div class="p-8 profile-content bg-white p-6 rounded-lg shadow-lg w-80 text-center">
+    <h1 class="text-3xl font-bold text-red-600 text-xl font-bold">Bienvenido a FideBank Sr. {{current_user.username}}</h1>
+    <div class="mt-4 flex justify-center">
+      <img width="64" height="64" src="https://img.icons8.com/glyph-neue/64/FA5252/user--v1.png" alt="user--v1"/>
+  </div>
+  <p class="mt-4 text-gray-600 font-semibold">Fecha Último Acceso</p>
+  <p class="text-gray-800 text-lg font-medium">09/02/2025</p>
+</div>
+
+</div>
 </div>
 
 

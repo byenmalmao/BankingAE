@@ -11,7 +11,16 @@ html {
   margin: 30px auto;
   padding: 40px;
 }
-
+.profile-content {
+  background-color: antiquewhite;
+  display: block;
+  position: relative;
+  width: fit-content;
+  
+  padding: 20px;
+  margin: 50px;
+  border-radius: 5px;
+}
 footer {
   display: flex;
   justify-content: space-between;

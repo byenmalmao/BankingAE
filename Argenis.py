@@ -15,7 +15,7 @@ app = Flask(__name__)
 # Configuración de la base de datos
 app.config['MYSQL_HOST'] = 'localhost'     #Recordar cambiar con sus datos 
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'tdohmgrj'
+app.config['MYSQL_PASSWORD'] = 'Bismuto888@#'
 app.config['MYSQL_DB'] = 'fidebank'
 
 app.secret_key = 'mysecretkey'
@@ -148,112 +148,34 @@ def register():
 
 
 ##################################################################################
-# Ruta para crear un nuevo usuario
-@app.route('/create_user', methods=['GET', 'POST'])  #Se crea automatico Argenis Cambios . 
-def create_user():
-    if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        amount = request.form['amount']
+# Ruta para la página de actividad (transacciones realizadas)
+@app.route('/actividad')
+def actividad():
+    return render_template('actividad.html')
 
-        db = db()
-        cursor = db.cursor()
+# Ruta para ver todas las cuentas registradas
+@app.route('/cuentas')
+def cuentas():
+    return render_template('cuentas.html')
+# Ruta para acceder a la sección de tarjetas
+@app.route('/tarjetas')
+def tarjetas():
+    return render_template('tarjetas.html')
 
-        # Verificar si el email ya existe
-        cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
-        if cursor.fetchone():
-            flash('Email Already Exist !! Please use another Email', 'error')
-        else:
-            # Insertar nuevo usuario
-            cursor.execute("INSERT INTO users (name, email, amount) VALUES (%s, %s, %s)", (name, email, amount))
-            db.commit()
-            flash('Congrats!! New User added', 'success')
-            return redirect(url_for('index'))
+# Ruta para la sección de soporte
+@app.route('/soporte')
+def soporte():
+    return render_template('soporte.html')
 
-    return render_template('create_user.html')
+# Ruta para realizar transferencias
+@app.route('/About')
+def About():
+    return render_template('about.html')
 
-# Ruta para ver todos los usuarios
-@app.route('/all_users')
-def all_users():
-    db = db()
-    cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM users")
-    users = cursor.fetchall()
-    return render_template('all_users.html', users=users)
-
-# Ruta para transferir dinero
-@app.route('/transfer_money', methods=['GET', 'POST'])
-def transfer_money():
-    if request.method == 'POST':
-        from_id = request.form['from_id']
-        to_id = request.form['to_id']
-        amount = float(request.form['amount'])
-
-        db = db()
-        cursor = db.cursor(dictionary=True)
-
-        # Obtener información del remitente y receptor
-        cursor.execute("SELECT * FROM users WHERE id = %s", (from_id,))
-        sender = cursor.fetchone()
-        cursor.execute("SELECT * FROM users WHERE id = %s", (to_id,))
-        receiver = cursor.fetchone()
-
-        if amount < 0:
-            flash('Oops! Negative values cannot be Transferred', 'error')
-        elif amount > sender['amount']:
-            flash('Oops! Insufficient Amount', 'error')
-        elif amount == 0:
-            flash('Oops! Zero value cannot be Transferred', 'error')
-        else:
-            # Actualizar saldos
-            new_sender_amount = sender['amount'] - amount
-            new_receiver_amount = receiver['amount'] + amount
-
-            cursor.execute("UPDATE users SET amount = %s WHERE id = %s", (new_sender_amount, from_id))
-            cursor.execute("UPDATE users SET amount = %s WHERE id = %s", (new_receiver_amount, to_id))
-
-            # Registrar la transacción
-            cursor.execute("INSERT INTO transaction (sender, receiver, amount) VALUES (%s, %s, %s)",
-                           (sender['name'], receiver['name'], amount))
-            db.commit()
-
-            flash('Transaction Successful', 'success')
-            return redirect(url_for('index'))
-
-    db = db()
-    cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM users")
-    users = cursor.fetchall()
-    return render_template('transfer_money.html', users=users)
-
-# Ruta para ver el historial de transacciones
-@app.route('/transfer_log')
-def transfer_log():
-    db = db()
-    cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM transaction")
-    transactions = cursor.fetchall()
-    return render_template('transfer_log.html', transactions=transactions)
-
-# Ruta para contactar
-@app.route('/contact', methods=['GET', 'POST'])
-def contact():
-    if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        subject = request.form['subject']
-        message = request.form['message']
-
-        db = db()
-        cursor = db.cursor()
-        cursor.execute("INSERT INTO contact (name, email, subject, message) VALUES (%s, %s, %s, %s)",
-                       (name, email, subject, message))
-        db.commit()
-
-        flash('Message Sent Successfully', 'success')
-        return redirect(url_for('contact'))
-
-    return render_template('contact.html')
+# Ruta para realizar transferencias
+@app.route('/transferir')
+def transferir():
+    return render_template('transferir.html')
 ##################################################################################
 
 if __name__ == '__main__':
