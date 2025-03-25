@@ -163,9 +163,9 @@ def tarjetas():
     return render_template('tarjetas.html')
 
 # Ruta para la sección de soporte
-@app.route('/soporte')
-def soporte():
-    return render_template('soporte.html')
+@app.route('/acerca_de')
+def acerca_de():
+    return render_template('acerca_de.html')
 
 # Ruta para realizar transferencias
 @app.route('/About')
