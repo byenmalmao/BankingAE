@@ -37,17 +37,34 @@
   
 {% endblock %}
 {% block body %}
-<div class="p-8 profile-content bg-white p-6 rounded-lg shadow-lg w-80 text-center">
-    <h1 class="text-3xl font-bold text-red-600 text-xl font-bold">Bienvenido a FideBank Sr. {{current_user.username}}</h1>
-    <div class="mt-4 flex justify-center">
-      <img width="64" height="64" src="https://img.icons8.com/glyph-neue/64/FA5252/user--v1.png" alt="user--v1"/>
+
+<div class="min-h-screen bg-cover bg-center bg-no-repeat px-8 py-12" style="background-image: url('../static/styles/fondoindex.jpg');">
+  <!-- Fondo semi-transparente para mejorar la visibilidad del texto -->
+  <div class="bg-white bg-opacity-80 p-10 rounded-lg shadow-lg max-w-4xl mx-auto">
+      
+      <!-- Saludo al usuario -->
+      <h1 class="text-5xl font-extrabold text-red-600 text-center mb-6">
+          ¡Bienvenido a FideBank Sr. {{current_user.username}}!
+      </h1>
+
+      <!-- Icono de usuario centrado -->
+      <div class="flex justify-center">
+          <img width="80" height="80" src="https://img.icons8.com/glyph-neue/80/FA5252/user--v1.png" alt="user-icon"/>
+      </div>
+
+      <!-- Información de cuenta -->
+      <div class="mt-10 text-center">
+          <p class="text-gray-700 text-xl font-semibold">Saldo Disponible</p>
+          <p class="text-gray-900 text-3xl font-bold">$12,450.75</p>
+      </div>
+
+      <!-- Último acceso con fecha actual -->
+      <div class="mt-6 text-center">
+          <p class="text-gray-700 text-xl font-semibold">Fecha Último Acceso</p>
+          <p class="text-gray-900 text-2xl font-medium">{{ fecha_hoy if fecha_hoy else "23/03/2025" }}</p>
+      </div>
+      
   </div>
-  <p class="mt-4 text-gray-600 font-semibold">Fecha Último Acceso</p>
-  <p class="text-gray-800 text-lg font-medium">09/02/2025</p>
 </div>
-
-</div>
-</div>
-
 
 {% endblock %}
