@@ -5,6 +5,7 @@ from forms import LoginForm
 from werkzeug.security import generate_password_hash
 from flask_wtf.csrf import CSRFProtect
 from flask_login import  LoginManager,login_user,login_required,logout_user
+from flask_login import current_user 
 
 from models.ModelUser import ModelUser
 
@@ -182,8 +183,10 @@ def actividad():
 
 # Ruta para ver todas las cuentas registradas
 @app.route('/cuentas')
+@login_required
 def cuentas():
-    return render_template('cuentas.html')
+    # The accounts are already loaded in current_user.cuentas
+    return render_template('cuentas.html', cuentas=current_user.cuenta)
 # Ruta para acceder a la sección de tarjetas
 @app.route('/tarjetas')
 def tarjetas():

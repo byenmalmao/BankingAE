@@ -72,7 +72,11 @@
       <!-- Información de cuenta -->
       <div class="mt-10 text-center">
           <p class="text-gray-700 text-xl font-semibold">Saldo Disponible</p>
-          <p class="text-gray-900 text-3xl font-bold">$12,450.75</p>
+          <p class="text-gray-900 text-3xl font-bold"> {% if current_user.cuenta_principal %}
+            ${{ "%.2f"|format(current_user.cuenta_principal.saldo) }}
+          {% else %}
+            No tiene cuentas
+          {% endif %}</p>
       </div>
 
       <!-- Último acceso con fecha actual -->
