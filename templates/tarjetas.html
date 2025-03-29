@@ -14,11 +14,12 @@
       <nav>
         <ul class="flex space-x-6">
           <li><a href="{{ url_for('home') }}" class="text-black hover:text-red-600">Inicio</a></li>
-          <li><a href="{{ url_for('cuentas') }}" class="text-black hover:text-red-600">Todas tus Cuentas</a></li>
+          <li><a href="{{ url_for('cuentas') }}" class="text-black hover:text-red-600">Cuentas</a></li>
     <!-- <li><a href="create_user.html" class="text-black hover:text-red-600">Create User</a></li> -->
           <li><a href="{{ url_for('transferir') }}" class="text-black hover:text-red-600">Transferencias</a></li>
           <li><a href="{{ url_for('actividad') }}"  class="text-black hover:text-red-600">Movimientos</a></li>
-          <li><a href="{{ url_for('soporte') }}"  class="text-black hover:text-red-600">Acerca de Nosotros</a></li>
+          <li><a href="{{ url_for('acerca_de') }}"  class="text-black hover:text-red-600">Acerca de Nosotros</a></li>
+
     <!--  <li><a href="contact.html" class="text-black hover:text-red-600">Contact</a></li> -->
         </ul>
       </nav>
@@ -32,7 +33,7 @@
   </header>
   
 {% endblock %}
-{% block content %}
+{% block body %}
 <div class="create">
     <h1>CREATE USER</h1>
     <div class="createUser">

@@ -14,11 +14,12 @@
       <nav>
         <ul class="flex space-x-6">
           <li><a href="{{ url_for('home') }}" class="text-black hover:text-red-600">Inicio</a></li>
-          <li><a href="{{ url_for('cuentas') }}" class="text-black hover:text-red-600">Todas tus Cuentas</a></li>
+          <li><a href="{{ url_for('cuentas') }}" class="text-black hover:text-red-600">Cuentas</a></li>
     <!-- <li><a href="create_user.html" class="text-black hover:text-red-600">Create User</a></li> -->
           <li><a href="{{ url_for('transferir') }}" class="text-black hover:text-red-600">Transferencias</a></li>
           <li><a href="{{ url_for('actividad') }}"  class="text-black hover:text-red-600">Movimientos</a></li>
-          <li><a href="{{ url_for('soporte') }}"  class="text-black hover:text-red-600">Acerca de Nosotros</a></li>
+          <li><a href="{{ url_for('acerca_de') }}"  class="text-black hover:text-red-600">Acerca de Nosotros</a></li>
+
     <!--  <li><a href="contact.html" class="text-black hover:text-red-600">Contact</a></li> -->
         </ul>
       </nav>
@@ -32,26 +33,174 @@
   </header>
   
 {% endblock %}
-{% block content %}
-<h1>TRANSFER MONEY</h1>
-<div class="all_users" style="height: 500px;">
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>NAME</th>
-            <th>EMAIL</th>
-            <th>BALANCE</th>
-            <th>OPERATION</th>
-        </tr>
-        {% for user in users %}
-        <tr>
-            <td>{{ user.id }}</td>
-            <td>{{ user.name }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.amount }}</td>
-            <td id="transfer"><a href="{{ url_for('transfer_money', id=user.id) }}"><button type="button">TRANSFER</button></a></td>
-        </tr>
-        {% endfor %}
-    </table>
+{% block body %}
+<div class="max-w-3xl mx-auto p-6">
+  <h1 class="text-3xl font-bold text-blue-800 mb-8">Servicios Bancarios</h1>
+  
+  <!-- Servicio: Transferir -->
+  <div class="mb-4 border-b border-gray-200 pb-4">
+      <button 
+          @click="openMenu === 'transferir' ? openMenu = null : openMenu = 'transferir'"
+          class="flex justify-between items-center w-full text-left font-medium text-gray-700 hover:text-blue-600 focus:outline-none"
+      >
+          <span class="flex items-center">
+              <i class="fas fa-exchange-alt mr-3 text-blue-500"></i>
+              Transferencias
+          </span>
+          <i class="fas" :class="openMenu === 'transferir' ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+      </button>
+      
+      <div x-show="openMenu === 'transferir'" x-collapse class="mt-3 pl-9">
+          <a href="#" class="block py-2 px-4 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
+              <i class="fas fa-arrow-right mr-2 text-green-500"></i>
+              Entre mis cuentas
+              <span class="text-xs text-gray-500 ml-2">Disponible 24/7</span>
+          </a>
+          <a href="#" class="block py-2 px-4 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
+              <i class="fas fa-user-friends mr-2 text-blue-500"></i>
+              A otro cliente (mismo banco)
+              <span class="text-xs text-gray-500 ml-2">Sin comisión</span>
+          </a>
+          <a href="#" class="block py-2 px-4 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
+              <i class="fas fa-university mr-2 text-purple-500"></i>
+              Interbancaria (SPEI)
+              <span class="text-xs text-gray-500 ml-2">Hasta $50,000 MXN</span>
+          </a>
+          <a href="#" class="block py-2 px-4 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
+              <i class="fas fa-globe-americas mr-2 text-orange-500"></i>
+              Internacional (SWIFT)
+              <span class="text-xs text-gray-500 ml-2">Tipo de cambio preferencial</span>
+          </a>
+      </div>
+  </div>
+  
+  <!-- Servicio: Pagos -->
+  <div class="mb-4 border-b border-gray-200 pb-4">
+      <button 
+          @click="openMenu === 'pagos' ? openMenu = null : openMenu = 'pagos'"
+          class="flex justify-between items-center w-full text-left font-medium text-gray-700 hover:text-blue-600 focus:outline-none"
+      >
+          <span class="flex items-center">
+              <i class="fas fa-credit-card mr-3 text-green-500"></i>
+              Pagos
+          </span>
+          <i class="fas" :class="openMenu === 'pagos' ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+      </button>
+      
+      <div x-show="openMenu === 'pagos'" x-collapse class="mt-3 pl-9">
+          <a href="#" class="block py-2 px-4 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
+              <i class="fas fa-bolt mr-2 text-yellow-500"></i>
+              Servicios básicos (luz, agua, gas)
+              <span class="text-xs text-gray-500 ml-2">Más de 100 proveedores</span>
+          </a>
+          <a href="#" class="block py-2 px-4 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
+              <i class="fas fa-mobile-alt mr-2 text-indigo-500"></i>
+              Teléfono y TV
+              <span class="text-xs text-gray-500 ml-2">Recarga de tiempo aire</span>
+          </a>
+          <a href="#" class="block py-2 px-4 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
+              <i class="fas fa-graduation-cap mr-2 text-red-500"></i>
+              Colegiaturas y escuelas
+          </a>
+          <a href="#" class="block py-2 px-4 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
+              <i class="fas fa-tags mr-2 text-teal-500"></i>
+              Promociones especiales
+              <span class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full ml-2">Nuevo</span>
+          </a>
+      </div>
+  </div>
+  
+  <!-- Servicio: Retiros -->
+  <div class="mb-4 border-b border-gray-200 pb-4">
+      <button 
+          @click="openMenu === 'retiros' ? openMenu = null : openMenu = 'retiros'"
+          class="flex justify-between items-center w-full text-left font-medium text-gray-700 hover:text-blue-600 focus:outline-none"
+      >
+          <span class="flex items-center">
+              <i class="fas fa-money-bill-wave mr-3 text-purple-500"></i>
+              Retiros sin tarjeta
+          </span>
+          <i class="fas" :class="openMenu === 'retiros' ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+      </button>
+      
+      <div x-show="openMenu === 'retiros'" x-collapse class="mt-3 pl-9">
+          <a href="#" class="block py-2 px-4 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
+              <i class="fas fa-qrcode mr-2 text-blue-500"></i>
+              Por código QR
+              <span class="text-xs text-gray-500 ml-2">En cajeros asociados</span>
+          </a>
+          <a href="#" class="block py-2 px-4 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
+              <i class="fas fa-sms mr-2 text-green-500"></i>
+              Por SMS
+              <span class="text-xs text-gray-500 ml-2">Código de un solo uso</span>
+          </a>
+          <a href="#" class="block py-2 px-4 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
+              <i class="fas fa-user-shield mr-2 text-orange-500"></i>
+              Para terceros autorizados
+          </a>
+      </div>
+  </div>
+  
+  <!-- Servicio: Divisas -->
+  <div class="mb-4 border-b border-gray-200 pb-4">
+      <button 
+          @click="openMenu === 'divisas' ? openMenu = null : openMenu = 'divisas'"
+          class="flex justify-between items-center w-full text-left font-medium text-gray-700 hover:text-blue-600 focus:outline-none"
+      >
+          <span class="flex items-center">
+              <i class="fas fa-dollar-sign mr-3 text-yellow-500"></i>
+              Cambio de divisas
+          </span>
+          <i class="fas" :class="openMenu === 'divisas' ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+      </button>
+      
+      <div x-show="openMenu === 'divisas'" x-collapse class="mt-3 pl-9">
+          <a href="#" class="block py-2 px-4 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
+              <i class="fas fa-chart-line mr-2 text-green-500"></i>
+              Tipo de cambio preferencial
+              <span class="text-xs text-gray-500 ml-2">Clientes premium</span>
+          </a>
+          <a href="#" class="block py-2 px-4 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
+              <i class="fas fa-coins mr-2 text-yellow-500"></i>
+              Compra de dólares
+              <span class="text-xs text-gray-500 ml-2">Sin comisión</span>
+          </a>
+          <a href="#" class="block py-2 px-4 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
+              <i class="fas fa-euro-sign mr-2 text-blue-500"></i>
+              Otras divisas (EUR, GBP)
+          </a>
+      </div>
+  </div>
+  
+  <!-- Servicio: Productos -->
+  <div class="mb-4">
+      <button 
+          @click="openMenu === 'productos' ? openMenu = null : openMenu = 'productos'"
+          class="flex justify-between items-center w-full text-left font-medium text-gray-700 hover:text-blue-600 focus:outline-none"
+      >
+          <span class="flex items-center">
+              <i class="fas fa-star mr-3 text-red-500"></i>
+              Nuevos productos
+          </span>
+          <i class="fas" :class="openMenu === 'productos' ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+      </button>
+      
+      <div x-show="openMenu === 'productos'" x-collapse class="mt-3 pl-9">
+          <a href="#" class="block py-2 px-4 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
+              <i class="fas fa-piggy-bank mr-2 text-teal-500"></i>
+              Cuenta de ahorro plus
+              <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full ml-2">4.5% anual</span>
+          </a>
+          <a href="#" class="block py-2 px-4 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
+              <i class="fas fa-calendar-alt mr-2 text-purple-500"></i>
+              Depósitos a plazo fijo
+              <span class="text-xs text-gray-500 ml-2">Desde 30 días</span>
+          </a>
+          <a href="#" class="block py-2 px-4 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
+              <i class="fas fa-shield-alt mr-2 text-orange-500"></i>
+              Seguro de protección de saldo
+          </a>
+      </div>
+  </div>
 </div>
 {% endblock %}

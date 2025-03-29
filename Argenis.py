@@ -15,7 +15,7 @@ app = Flask(__name__)
 # Configuración de la base de datos
 app.config['MYSQL_HOST'] = 'localhost'     #Recordar cambiar con sus datos 
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'tdohmgrj'
+app.config['MYSQL_PASSWORD'] = 'Bismuto888@#'
 app.config['MYSQL_DB'] = 'fidebank'
 
 app.secret_key = 'mysecretkey'
@@ -103,41 +103,66 @@ def register():
         telefono = request.form['telefono']
         direccion = request.form['direccion']
         estado = request.form['estado']
-
+        username = request.form['username']
+        password = request.form['password']
+        # Validar que el correo no esté ya registrado
+        
         # Generar una contraseña aleatoria de 6 dígitos
-        password_numerica = str(random.randint(100000, 999999))
+       # password_numerica = str(random.randint(100000, 999999))
 
         # Encriptar la contraseña antes de guardarla
-        password_encriptada = generate_password_hash(password_numerica)
+        password_encriptada = generate_password_hash(password)
 
         cursor = db.connection.cursor()
 
         try:
-            # Insertar nuevo cliente
-            cursor.execute("""
-                INSERT INTO cliente (Nombre, Apellido, DocumentoIdentidad, Correo, Telefono, Direccion, Estado)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
-            """, (nombre, apellido, documento, correo, telefono, direccion, estado))
-            
+            # 1. Primero insertar el USUARIO (para obtener su ID)
+            cursor.execute(
+                "INSERT INTO usuario (username, password) VALUES (%s, %s)",
+                (username, password_encriptada)
+            )
+            IdUsuario = cursor.lastrowid  # Obtenemos el ID del usuario recién creado
             db.connection.commit()
 
-            # Obtener el último ID insertado (IdCliente)
-            cliente_id = cursor.lastrowid
-
-            # Insertar usuario con el mismo nombre y la contraseña generada
-            cursor.execute("""
-                INSERT INTO usuario (username, password)
-                VALUES (%s, %s)
-            """, (nombre, password_encriptada))
-
+            # 2. Insertar el CLIENTE con el user_id
+            cursor.execute(
+                """INSERT INTO cliente 
+                (Nombre, Apellido, DocumentoIdentidad, Correo, Telefono, Direccion, Estado, IdUsuario)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""",
+                (nombre, apellido, documento, correo, telefono, direccion, estado, IdUsuario)
+            )
+            IdCliente= cursor.lastrowid  # ID del cliente recién creado
             db.connection.commit()
 
-            flash(f'Usuario creado: {nombre} - Contraseña: {password_numerica}', 'success')
+            # 3. Actualizar el USUARIO con el cliente_id
+            cursor.execute(
+                "UPDATE usuario SET IdCliente= %s WHERE IdUsuario = %s",
+                (IdCliente, IdUsuario)
+            )
+            db.connection.commit()
+
+            flash(f'Usuario: {username} \n- Contraseña: {password}', 'success')
             return redirect(url_for('login'))
 
         except Exception as e:
             db.connection.rollback()
-            flash(f'Error al registrar cliente: {str(e)}', 'error')
+            
+            # Identificar el campo duplicado
+            error_msg = "Error al registrar. Por favor intente nuevamente."
+            error_str = str(e).lower()
+            
+            if 'username' in error_str:
+                error_msg = f"El nombre de usuario '{username}' ya está en uso"
+            elif 'correo' in error_str:
+                error_msg = f"El correo '{correo}' ya está registrado"
+            elif 'documentoidentidad' in error_str:
+                error_msg = "El número de documento ya existe en el sistema"
+            elif 'documento' in error_str:  # Por si acaso
+                error_msg = "El número de documento ya existe en el sistema"
+            
+            flash(error_msg, 'error')
+            return render_template('registrar.html', 
+                                form_data=request.form)  # Para mantener los datos ingresados
 
         finally:
             cursor.close()
