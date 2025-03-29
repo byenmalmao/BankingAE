@@ -32,9 +32,11 @@
     
       <div class="flex flex-col">
         <label class="font-medium text-gray-700">Documento de Identidad</label>
-        <input type="text" name="documento" id="cedula" class="w-full px-4 py-2 border rounded-md hover:border-red-500 focus:ring-2 focus:ring-red-400 transition" required onkeyup="valida()" />
+        <input type="text" name="documento" id="cedula"  maxlength="13" oninput="formatearCedula()" class="w-full px-4 py-2 border rounded-md hover:border-red-500 focus:ring-2 focus:ring-red-400 transition" required onkeyup="valida()" />
         <small id="result" class="text-sm font-medium"></small>
+        <div id="result"></div>
       </div>
+      
     
       <div class="flex flex-col">
         <label class="font-medium text-gray-700">Correo</label>
@@ -43,7 +45,8 @@
     
       <div class="flex flex-col">
         <label class="font-medium text-gray-700">Teléfono</label>
-        <input type="text" name="telefono" class="w-full px-4 py-2 border rounded-md hover:border-red-500 focus:ring-6 focus:ring-red-400 transition" />
+    <input type="text" name="telefono" id="telefono" maxlength="16" oninput="formatearTelefono()" class="w-full px-4 py-2 border rounded-md hover:border-red-500 focus:ring-2 focus:ring-red-400 transition" />
+    <div id="result2" class="mt-2 text-sm"></div>
       </div>
       <div class="flex flex-col">
         <label class="font-medium text-gray-700">Usuario</label>
@@ -99,39 +102,83 @@
     </div>
   </div>
 </div>
-{% endblock %}
+<!--
+<script>  
+  function formatearCedula() {
+      let input = document.getElementById('cedula');
+      let cedula = input.value.replace(/\D/g, ''); // Elimina todo lo que no sea número
 
-{% block script %}
-<script>                      
+      // Aplica el formato XXX-XXXXXXX-X
+      if (cedula.length > 3) {
+          cedula = cedula.substring(0, 3) + '-' + cedula.substring(3);
+      }
+      if (cedula.length > 11) {
+          cedula = cedula.substring(0, 11) + '-' + cedula.substring(11, 12);
+      }
+
+      input.value = cedula; // Actualiza el valor con formato
+  }
+
   function valida() {
-    let cedula = document.getElementById('cedula').value;
-    let c = cedula.split('');
-    let v = [1,2,1,2,1,2,1,2,1,2];
-    let result = 0;
-    
-    if (c.length !== 11) {
-      document.getElementById('result').innerHTML = '<p class="text-red-600">Cédula Incorrecta</p>';
-      return;
-    }
-    
-    for (let i = 0; i < 10; i++) {  
-      let up = c[i] * v[i];
-      let oc = up >= 10 ? up.toString().split('').reduce((a, b) => a + parseInt(b), 0) : up;
-      result += oc;   
-    }
-    
-    let dp = result;
-    let ac = parseInt(dp.toString().slice(0, -1) + '0');
-    let uj = (ac / 10) * 10;
-    dp = uj < dp ? (uj + 10) - dp : uj - dp;
+      let cedula = document.getElementById('cedula').value.trim();
+      let cedulaNumerica = cedula.replace(/\D/g, ''); // Remueve los guiones para validar
+      let c = cedulaNumerica.split('').map(Number);
+      let v = [1,2,1,2,1,2,1,2,1,2];
+      let result = 0;
+      let resultDiv = document.getElementById('result');
 
-    if (c[10] == dp) {             
-      document.getElementById('result').innerHTML = '<p class="text-green-600">Cédula Correcta</p>';
-    } else {
-      document.getElementById('result').innerHTML = '<p class="text-red-600">Cédula Incorrecta</p>';
+      if (cedulaNumerica.length !== 11) {
+          resultDiv.innerHTML = '<p style="color: red;">Cédula Incorrecta</p>';
+          return;
+      }
+
+      for (let i = 0; i < 10; i++) {  
+          let up = c[i] * v[i];
+          let oc = up >= 10 ? Math.floor(up / 10) + (up % 10) : up;
+          result += oc;   
+      }
+
+      let dp = Math.ceil(result / 10) * 10 - result;
+
+      if (c[10] === dp) {             
+          resultDiv.innerHTML = '<p style="color: green;">Cédula Correcta</p>';
+      } else {
+          resultDiv.innerHTML = '<p style="color: red;">Cédula Incorrecta</p>';
+      }
+  }    
+  
+  function formatearTelefono() {
+        let input = document.getElementById('telefono');
+        let telefono = input.value.replace(/\D/g, ''); // Elimina todo lo que no sea número
+
+        if (telefono.startsWith('1') && telefono.length > 1) {
+            telefono = '+' + telefono; // Mantiene el prefijo si es 11 dígitos
+        }
+
+        // Formato (XXX) XXX-XXXX para 10 o 11 dígitos
+        if (telefono.length >= 10) {
+            if (telefono.length === 11) {
+                telefono = '+' + telefono.substring(0, 1) + ' (' + telefono.substring(1, 4) + ') ' + telefono.substring(4, 7) + '-' + telefono.substring(7, 11);
+            } else {
+                telefono = '(' + telefono.substring(0, 3) + ') ' + telefono.substring(3, 6) + '-' + telefono.substring(6, 10);
+            }
+        }
+
+        input.value = telefono; // Actualiza el valor con formato
     }
-  }                    
+            let telefono = document.getElementById('telefono').value.replace(/\D/g, ''); // Solo números
+            let resultDiv = document.getElementById('result2');
+
+            if (telefono.length === 10 || (telefono.length === 11 && telefono.startsWith('1'))) {
+                resultDiv.innerHTML = '<p style="color: green;">Teléfono válido</p>';
+            } else {
+                resultDiv.innerHTML = '<p style="color: red;">Teléfono inválido</p>';
+            }
+        
 </script>
+-->
 {% endblock %}
+
+
 
 
