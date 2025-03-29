@@ -61,10 +61,8 @@
 
 {% block body %}
 <h1 class="text-center text-2xl font-bold mt-8">Cuentas</h1>
-
-<div class="container mx-auto mt-8">
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-    {% for cuenta in cuentas %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  {% for cuenta in cuentas %}
     <div class="bg-white shadow-md rounded-lg p-6">
       <h2 class="text-xl font-semibold mb-4">Cuenta {{ cuenta.numero }}</h2>
       <p><strong>Tipo:</strong> {{ cuenta.tipo }}</p>
@@ -72,7 +70,12 @@
       <p><strong>Fecha de Apertura:</strong> {{ cuenta.fecha_apertura.strftime('%Y-%m-%d') if cuenta.fecha_apertura else 'N/A' }}</p>
       <p><strong>Estado:</strong> {{ cuenta.estado }}</p>
     </div>
-    {% endfor %}
-  </div>
+  {% endfor %}
 </div>
+
+<div class="flex justify-center mt-8">
+  <a href="{{ url_for('transferir') }}" class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+    Realizar Transferencia
+  </a>
+
 {% endblock %}

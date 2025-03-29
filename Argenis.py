@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash
 from flask_wtf.csrf import CSRFProtect
 from flask_login import  LoginManager,login_user,login_required,logout_user
 from flask_login import current_user 
+from datetime import datetime
 
 from models.ModelUser import ModelUser
 
@@ -108,6 +109,11 @@ def register():
         estado = request.form['estado']
         username = request.form['username']
         password = request.form['password']
+        
+        banco = 1  # ID del banco por defecto (puedes cambiarlo según tu lógica)
+        saldo = 0.0  # Saldo inicial
+        tipo = 'Ahorro'  # Tipo de cuenta por defecto
+        fecha_apertura = datetime.now().strftime('%Y-%m-%d')  # Fecha y hora actual
         # Validar que el correo no esté ya registrado
         
         # Generar una contraseña aleatoria de 6 dígitos
@@ -143,6 +149,14 @@ def register():
                 (IdCliente, IdUsuario)
             )
             db.connection.commit()
+            
+            cursor.execute(
+                """INSERT INTO CUENTA
+                (TipoCuenta, Saldo, FechaApertura, IdCliente, IdBanco) VALUES (%s,%s,%s,%s,%s) """,
+                (tipo, saldo, fecha_apertura, IdCliente,banco)
+            )
+            
+            db.connection.commit()
 
             flash(f'Usuario: {username} \n- Contraseña: {password}', 'success')
             return redirect(url_for('login'))
@@ -150,6 +164,10 @@ def register():
         except Exception as e:
             db.connection.rollback()
             
+           # error_str = str(e).lower()
+           # print(f"Error: {error_str}")  # Para depuración, puedes imprimir el error en la consola
+            
+           
             # Identificar el campo duplicado
             error_msg = "Error al registrar. Por favor intente nuevamente."
             error_str = str(e).lower()
@@ -185,6 +203,13 @@ def actividad():
 @app.route('/cuentas')
 @login_required
 def cuentas():
+    
+    cuenta = [
+        {"numero": "12345", "tipo": "Ahorros", "saldo": 1500.75, "fecha_apertura": datetime(2021, 5, 12), "estado": "Activo"},
+        {"numero": "67890", "tipo": "Corriente", "saldo": 3000.50, "fecha_apertura": datetime(2020, 8, 22), "estado": "Activo"},
+        {"numero": "11223", "tipo": "Ahorros", "saldo": 1200.25, "fecha_apertura": datetime(2022, 11, 30), "estado": "Inactivo"},
+        {"numero": "44556", "tipo": "Corriente", "saldo": 2500.10, "fecha_apertura": datetime(2019, 3, 14), "estado": "Activo"}
+    ]
     # The accounts are already loaded in current_user.cuentas
     return render_template('cuentas.html', cuentas=current_user.cuenta)
 # Ruta para acceder a la sección de tarjetas

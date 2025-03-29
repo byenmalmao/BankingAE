@@ -19,6 +19,7 @@
     <form action="{{ url_for('register') }}" method="POST" class="grid grid-cols-1 sm:grid-cols-2 gap-4" autocomplete="off">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <input type="hidden" name="estado" value="Activo">
+      
     
       <div class="flex flex-col">
         <label class="font-medium text-gray-700">Nombre</label>
