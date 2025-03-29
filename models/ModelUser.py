@@ -1,21 +1,44 @@
 from .entitties.User import User
 
-
-class ModelUser():
-
+class ModelUser:
     @classmethod
     def login(self, db, user):
         try:
             cursor = db.connection.cursor()
-            sql = """SELECT idUsuario, username, password  FROM usuario
-                    WHERE username = '{}'""".format(user.username)
+            
+            # Consulta usando los nombres exactos de tus columnas
+            sql = """SELECT IdUsuario, username, password FROM usuario 
+                     WHERE username = '{}'""".format(user.username)
             cursor.execute(sql)
             row = cursor.fetchone()
-            if row != None:
-                user = User(row[0], row[1], User.check_password(row[2], user.password))
-                return user
-            else:
-                return None
+            
+            if row:
+                # Verificar contraseña
+                password_ok = User.check_password(row[2], user.password)
+                
+                # Buscar cliente relacionado (usando IdUsuario)
+                cursor.execute("""SELECT * FROM cliente 
+                               WHERE IdUsuario = {}""".format(row[0]))
+                cliente_row = cursor.fetchone()
+                
+                # Convertir a diccionario si existe cliente
+                cliente_data = None
+                if cliente_row:
+                    # Asumiendo que sabes el orden de las columnas en cliente
+                    cliente_data = {
+                        'IdCliente': cliente_row[0],
+                        'Nombre': cliente_row[1],
+                        # ... otras columnas que necesites
+                    }
+                
+                return User(
+                    id=row[0],  # IdUsuario
+                    username=row[1],
+                    password=password_ok,
+                    cliente=cliente_data
+                )
+            return None
+            
         except Exception as ex:
             raise Exception(ex)
 
@@ -23,12 +46,33 @@ class ModelUser():
     def get_by_id(self, db, id):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT idusuario, username FROM usuario WHERE idusuario = {}".format(id)
+            
+            # Obtener usuario
+            sql = "SELECT IdUsuario, username FROM usuario WHERE IdUsuario = {}".format(id)
             cursor.execute(sql)
             row = cursor.fetchone()
-            if row != None:
-                return User(row[0], row[1], None)
-            else:
-                return None
+            
+            if row:
+                # Buscar cliente relacionado
+                cursor.execute("""SELECT * FROM cliente 
+                               WHERE IdUsuario = {}""".format(row[0]))
+                cliente_row = cursor.fetchone()
+                
+                cliente_data = None
+                if cliente_row:
+                    cliente_data = {
+                        'IdCliente': cliente_row[0],
+                        'Nombre': cliente_row[1],
+                        # ... otras columnas
+                    }
+                
+                return User(
+                    id=row[0],  # IdUsuario
+                    username=row[1],
+                    password=None,
+                    cliente=cliente_data
+                )
+            return None
+            
         except Exception as ex:
             raise Exception(ex)

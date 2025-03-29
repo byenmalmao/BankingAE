@@ -46,23 +46,25 @@ def index():
 # Ruta para la página de login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-     if request.method == 'POST':
-         #print(request.form['username'])
-         #print(request.form['password'])
+    if request.method == 'POST':
         user = User(0, request.form['username'], request.form['password'])
         logged_user = ModelUser.login(db, user)
-        if logged_user != None:
-            if logged_user.password == True:
+        
+        if logged_user is not None:
+            if logged_user.password:  # Si la contraseña es correcta
                 login_user(logged_user)
+                
+                # Ejemplo: Acceder a datos del cliente
+                if logged_user.cliente:
+                    print(f"Cliente: {logged_user.cliente['Nombre']}")
+                
                 return redirect(url_for('home'))
             else:
-                flash('Contraseña incorrectos')
-                return render_template('auth/login.html')
+                flash('Contraseña incorrecta', 'error')
         else:
-            flash('Usuario no encontrado')
-            return render_template('auth/login.html')
-     else:
-         return render_template('auth/login.html')
+            flash('Usuario no encontrado', 'error')
+    
+    return render_template('auth/login.html')
 
 #Log Out
 @app.route('/logout')
