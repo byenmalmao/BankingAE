@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}Contáctanos{% endblock %}
-
+{% block header %}{% endblock %} 
 {% block body %}
 <div class="container mx-auto py-10 px-6">
     <h1 class="text-3xl font-bold text-center text-gray-800">Conócenos🌟</h1>
@@ -28,7 +28,7 @@
         </div>
     </div>
     <div class="flex justify-center mt-6">
-        <a href="{{ url_for('index') }}" class="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition">
+        <a href="{{ url_for('login') }}" class="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition">
             Volver atras
         </a>
     </div>

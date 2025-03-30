@@ -1,70 +1,12 @@
-{% extends 'base.html' %} {% block header %}
-<header style="padding-bottom: 0rem" class="bg-white shadow py-4">
-    
-  <div class="container mx-auto flex justify-between items-center">
-    <!-- Logo y Nombre -->
-    <div class="flex items-left space-x-0">
-      <img
-        src="../static/styles/FidebankLogo.png"
-        alt="Fidebank Logo"
-        class="h-12 w-auto"
-      />
-      <h3
-        style="line-height: 5rem; font-size: 1.5rem; color: rgb(248 8 8)"
-        class="font-semibold ml-4"
-      ></h3>
-    </div>
-
-    <!-- Menú de navegación -->
-    <nav>
-      <ul class="flex space-x-6">
-          <li>
-              <a href="{{ url_for('home') }}" class="text-black hover:text-red-600">
-                  <i class="fas fa-home"></i> Inicio
-              </a>
-          </li>
-          <li>
-              <a href="{{ url_for('cuentas') }}" class="text-black hover:text-red-600">
-                  <i class="fas fa-wallet"></i> Cuentas
-              </a>
-          </li>
-          <li>
-              <a href="{{ url_for('transferir') }}" class="text-black hover:text-red-600">
-                  <i class="fas fa-exchange-alt"></i> Transferencias
-              </a>
-          </li>
-          <li>
-              <a href="{{ url_for('actividad') }}" class="text-black hover:text-red-600">
-                  <i class="fas fa-list-alt"></i> Movimientos
-              </a>
-          </li>
-          <li>
-              <a href="{{ url_for('acerca_de') }}" class="text-black hover:text-red-600">
-                  <i class="fas fa-info-circle"></i> Acerca de Nosotros
-              </a>
-          </li>
-      </ul>
-  </nav>
-  
-
-    <!-- Botón de Logout -->
-    <a
-      class="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
-      href="{{ url_for('logout') }}"
-    >
-      Logout
-    </a>
-  </div>
-</header>
-
-{% endblock %}
+{% extends 'base.html' %}
 
 {% block body %}
 <h1 class="text-center text-2xl font-bold mt-8">Cuentas</h1>
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
   {% for cuenta in cuentas %}
-    <div class="bg-white shadow-md rounded-lg p-6">
-      <h2 class="text-xl font-semibold mb-4">Cuenta {{ cuenta.numero }}</h2>
+    <div class="bg-white shadow-md  rounded-lg p-6 border rounded-md hover:border-red-500 focus:ring-2 focus:ring-red-400 transition">
+      <h2 class="text-xl font-semibold mb-2">Cuenta </h2>
+      <p class=" text-gray-700 hover:text-red-600 mt-2 text-center "><strong>{{ cuenta.numero }}</strong></p>
       <p><strong>Tipo:</strong> {{ cuenta.tipo }}</p>
       <p><strong>Saldo:</strong> ${{ "%.2f"|format(cuenta.saldo) }}</p>
       <p><strong>Fecha de Apertura:</strong> {{ cuenta.fecha_apertura.strftime('%Y-%m-%d') if cuenta.fecha_apertura else 'N/A' }}</p>
@@ -74,8 +16,8 @@
 </div>
 
 <div class="flex justify-center mt-8">
-  <a href="{{ url_for('transferir') }}" class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-    Realizar Transferencia
+  <a href="{{ url_for('solicitar_producto') }}" class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+    Solicitar Producto
   </a>
 
 {% endblock %}

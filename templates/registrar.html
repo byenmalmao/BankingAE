@@ -1,6 +1,29 @@
 {% extends './base.html' %}
 {% block title %}Registro de Cliente{% endblock %}
-
+{% block header %}
+<header style="padding-bottom: 0rem" class="bg-white shadow py-4">
+  <div class="flex items-left space-x-0">
+    <img
+      src="../static/styles/FidebankLogo.png"
+      src="../static/styles/FidebankLogo.png"
+      alt="Fidebank Logo"
+      class="h-12 w-auto"
+    />
+    <h3
+      style="
+        line-height: 5rem;
+        font-size: 1.5rem;
+        margin-left: 0rem;
+        color: rgb(248 8 8);
+      "
+      class="font-semibold ml-4"
+    >
+    
+    </h3>
+    
+  </div>
+</header>
+{% endblock %}
 {% block body %}
 <div class="min-h-screen bg-gray-100 p-8"> 
   <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-4xl mx-auto">
@@ -103,81 +126,29 @@
     </div>
   </div>
 </div>
-<!--
+
 <script>  
-  function formatearCedula() {
-      let input = document.getElementById('cedula');
-      let cedula = input.value.replace(/\D/g, ''); // Elimina todo lo que no sea número
 
-      // Aplica el formato XXX-XXXXXXX-X
-      if (cedula.length > 3) {
-          cedula = cedula.substring(0, 3) + '-' + cedula.substring(3);
-      }
-      if (cedula.length > 11) {
-          cedula = cedula.substring(0, 11) + '-' + cedula.substring(11, 12);
-      }
+function formatearCedula() {
+            let input = document.getElementById('cedula');
+            let cedula = input.value.replace(/\D/g, ''); // Elimina todo lo que no sea número
 
-      input.value = cedula; // Actualiza el valor con formato
-  }
+            // Aplica el formato XXX-XXXXXXX-X
+            if (cedula.length > 3) {
+                cedula = cedula.substring(0, 3) + '-' + cedula.substring(3);
+            }
+            if (cedula.length > 11) {
+                cedula = cedula.substring(0, 11) + '-' + cedula.substring(11, 12);
+            }
 
-  function valida() {
-      let cedula = document.getElementById('cedula').value.trim();
-      let cedulaNumerica = cedula.replace(/\D/g, ''); // Remueve los guiones para validar
-      let c = cedulaNumerica.split('').map(Number);
-      let v = [1,2,1,2,1,2,1,2,1,2];
-      let result = 0;
-      let resultDiv = document.getElementById('result');
-
-      if (cedulaNumerica.length !== 11) {
-          resultDiv.innerHTML = '<p style="color: red;">Cédula Incorrecta</p>';
-          return;
-      }
-
-      for (let i = 0; i < 10; i++) {  
-          let up = c[i] * v[i];
-          let oc = up >= 10 ? Math.floor(up / 10) + (up % 10) : up;
-          result += oc;   
-      }
-
-      let dp = Math.ceil(result / 10) * 10 - result;
-
-      if (c[10] === dp) {             
-          resultDiv.innerHTML = '<p style="color: green;">Cédula Correcta</p>';
-      } else {
-          resultDiv.innerHTML = '<p style="color: red;">Cédula Incorrecta</p>';
-      }
-  }    
-  
-  function formatearTelefono() {
-        let input = document.getElementById('telefono');
-        let telefono = input.value.replace(/\D/g, ''); // Elimina todo lo que no sea número
-
-        if (telefono.startsWith('1') && telefono.length > 1) {
-            telefono = '+' + telefono; // Mantiene el prefijo si es 11 dígitos
+            input.value = cedula; // Actualiza el valor con formato
         }
 
-        // Formato (XXX) XXX-XXXX para 10 o 11 dígitos
-        if (telefono.length >= 10) {
-            if (telefono.length === 11) {
-                telefono = '+' + telefono.substring(0, 1) + ' (' + telefono.substring(1, 4) + ') ' + telefono.substring(4, 7) + '-' + telefono.substring(7, 11);
-            } else {
-                telefono = '(' + telefono.substring(0, 3) + ') ' + telefono.substring(3, 6) + '-' + telefono.substring(6, 10);
-            }
-        }
-
-        input.value = telefono; // Actualiza el valor con formato
-    }
-            let telefono = document.getElementById('telefono').value.replace(/\D/g, ''); // Solo números
-            let resultDiv = document.getElementById('result2');
-
-            if (telefono.length === 10 || (telefono.length === 11 && telefono.startsWith('1'))) {
-                resultDiv.innerHTML = '<p style="color: green;">Teléfono válido</p>';
-            } else {
-                resultDiv.innerHTML = '<p style="color: red;">Teléfono inválido</p>';
-            }
+   
+ 
         
 </script>
--->
+
 {% endblock %}
 
 

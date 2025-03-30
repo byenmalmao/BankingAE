@@ -7,6 +7,7 @@ from flask_wtf.csrf import CSRFProtect
 from flask_login import  LoginManager,login_user,login_required,logout_user
 from flask_login import current_user 
 from datetime import datetime
+from generarcuenta import generar_cuenta_fidebank
 
 from models.ModelUser import ModelUser
 
@@ -42,6 +43,7 @@ def load_user(id):
 
 
 @app.route('/')
+
 def index():
     return redirect(url_for('login'))
 
@@ -86,6 +88,7 @@ def status_404(error):
     return '404'
 
 # Página del formulario
+@login_required
 @app.route('/home')
 def home():
     return render_template('index.html')
@@ -114,6 +117,7 @@ def register():
         saldo = 0.0  # Saldo inicial
         tipo = 'Ahorro'  # Tipo de cuenta por defecto
         fecha_apertura = datetime.now().strftime('%Y-%m-%d')  # Fecha y hora actual
+        Numero_de_Cuenta= generar_cuenta_fidebank()
         # Validar que el correo no esté ya registrado
         
         # Generar una contraseña aleatoria de 6 dígitos
@@ -152,8 +156,8 @@ def register():
             
             cursor.execute(
                 """INSERT INTO CUENTA
-                (TipoCuenta, Saldo, FechaApertura, IdCliente, IdBanco) VALUES (%s,%s,%s,%s,%s) """,
-                (tipo, saldo, fecha_apertura, IdCliente,banco)
+                (TipoCuenta, Saldo, FechaApertura, IdCliente, IdBanco, Numero_de_Cuenta) VALUES (%s,%s,%s,%s,%s,%s) """,
+                (tipo, saldo, fecha_apertura, IdCliente,banco, Numero_de_Cuenta)
             )
             
             db.connection.commit()
@@ -164,8 +168,8 @@ def register():
         except Exception as e:
             db.connection.rollback()
             
-           # error_str = str(e).lower()
-           # print(f"Error: {error_str}")  # Para depuración, puedes imprimir el error en la consola
+            error_str = str(e).lower()
+            print(f"Error: {error_str}")  # Para depuración, puedes imprimir el error en la consola
             
            
             # Identificar el campo duplicado
@@ -204,14 +208,21 @@ def actividad():
 @login_required
 def cuentas():
     
-    cuenta = [
-        {"numero": "12345", "tipo": "Ahorros", "saldo": 1500.75, "fecha_apertura": datetime(2021, 5, 12), "estado": "Activo"},
-        {"numero": "67890", "tipo": "Corriente", "saldo": 3000.50, "fecha_apertura": datetime(2020, 8, 22), "estado": "Activo"},
-        {"numero": "11223", "tipo": "Ahorros", "saldo": 1200.25, "fecha_apertura": datetime(2022, 11, 30), "estado": "Inactivo"},
-        {"numero": "44556", "tipo": "Corriente", "saldo": 2500.10, "fecha_apertura": datetime(2019, 3, 14), "estado": "Activo"}
-    ]
     # The accounts are already loaded in current_user.cuentas
     return render_template('cuentas.html', cuentas=current_user.cuenta)
+
+def saldo_total(id_cliente):
+    cursor = db.connection.cursor()
+    cursor.execute("SELECT COALESCE(SUM(Saldo), 0) FROM cuenta WHERE IdCliente = %s", (id_cliente,))
+    total_saldo = cursor.fetchone()[0]  # Obtener el resultado de la consulta
+    cursor.close()
+    
+    return total_saldo  # Devuelve un número en lugar de un string
+
+@app.route('/solicitar_producto')
+def solicitar_producto():
+    return render_template('solicitar_producto.html')
+
 # Ruta para acceder a la sección de tarjetas
 @app.route('/tarjetas')
 def tarjetas():
