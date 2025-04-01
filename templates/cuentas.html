@@ -6,12 +6,24 @@
   {% for cuenta in cuentas %}
     <div class="bg-white shadow-md  rounded-lg p-6 border rounded-md hover:border-red-500 focus:ring-2 focus:ring-red-400 transition">
       <h2 class="text-xl font-semibold mb-2">Cuenta </h2>
-      <p class=" text-gray-700 hover:text-red-600 mt-2 text-center "><strong>{{ cuenta.numero }}</strong></p>
+      <p class=" text-gray-700 hover:text-red-600 mt-2 text-center cursor-pointer hover:underline" id="textoCopiable"  onclick="copiarTexto(this)" ><strong>{{ cuenta.numero }}</strong></p>
       <p><strong>Tipo:</strong> {{ cuenta.tipo }}</p>
       <p><strong>Saldo:</strong> ${{ "%.2f"|format(cuenta.saldo) }}</p>
       <p><strong>Fecha de Apertura:</strong> {{ cuenta.fecha_apertura.strftime('%Y-%m-%d') if cuenta.fecha_apertura else 'N/A' }}</p>
       <p><strong>Estado:</strong> {{ cuenta.estado }}</p>
+      <!-- From Uiverse.io by vinodjangid07 --> 
+<a href="{{ url_for('detalle_cuenta') }}" class="Btn justify-right">
+  <div class="sign">
+    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 50 50">
+      <path d="M 25 2 C 12.309295 2 2 12.309295 2 25 C 2 37.690705 12.309295 48 25 48 C 37.690705 48 48 37.690705 48 25 C 48 12.309295 37.690705 2 25 2 z M 25 4 C 36.609824 4 46 13.390176 46 25 C 46 36.609824 36.609824 46 25 46 C 13.390176 46 4 36.609824 4 25 C 4 13.390176 13.390176 4 25 4 z M 25 11 A 3 3 0 0 0 22 14 A 3 3 0 0 0 25 17 A 3 3 0 0 0 28 14 A 3 3 0 0 0 25 11 z M 21 21 L 21 23 L 22 23 L 23 23 L 23 36 L 22 36 L 21 36 L 21 38 L 22 38 L 23 38 L 27 38 L 28 38 L 29 38 L 29 36 L 28 36 L 27 36 L 27 21 L 26 21 L 22 21 L 21 21 z"></path>
+      </svg>
+  </div>
+  <div class="text">Detalles</div>
+</a>
     </div>
+
+
+    
   {% endfor %}
 </div>
 
@@ -19,5 +31,23 @@
   <a href="{{ url_for('solicitar_producto') }}" class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
     Solicitar Producto
   </a>
+<script>
+ function copiarTexto(elemento) {
+  const texto = elemento.innerText; // Obtiene el texto del elemento clickeado
 
+  navigator.clipboard.writeText(texto).then(() => {
+    elemento.innerText = "¡Copiado!";
+    elemento.style.color = "green"; 
+
+    // Restaurar el texto después de 1.5 segundos
+    setTimeout(() => {
+      elemento.innerText = texto;
+      elemento.style.color = ""; 
+    }, 1500);
+  }).catch(err => {
+    console.error("Error al copiar:", err);
+  });
+}
+
+</script>
 {% endblock %}

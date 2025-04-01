@@ -39,7 +39,29 @@
       {% endif %}
     {% endwith %}
 
-    <form action="{{ url_for('register') }}" method="POST" class="grid grid-cols-1 sm:grid-cols-2 gap-4" autocomplete="off">
+    <!-- Mensaje de error oculto -->
+    <div id="error-alert" class="hidden flex flex-col gap-2 w-full text-xs z-50 mb-4">
+      <div class="error-alert cursor-default flex items-center justify-between w-full h-14 rounded-lg bg-[#232531] px-[10px]">
+          <div class="flex gap-2">
+              <div class="text-[#d65563] bg-white/5 backdrop-blur-xl p-1 rounded-lg">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"></path>
+                  </svg>
+              </div>
+              <div>
+                  <p class="text-white">Por favor intente de nuevo</p> 
+                  <p class="text-gray-500">Faltan Campos por llenar</p> 
+              </div>
+          </div>
+          <button onclick="cerrarAlerta()" class="text-gray-600 hover:bg-white/10 p-1 rounded-md transition-colors ease-linear">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"></path>
+              </svg>
+          </button>
+      </div>
+    </div>
+
+    <form action="{{ url_for('register') }}" method="POST" class="grid grid-cols-1 sm:grid-cols-2 gap-4" autocomplete="off"     onsubmit="return validarFormulario()">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <input type="hidden" name="estado" value="Activo">
       
@@ -125,10 +147,32 @@
       <a href="{{ url_for('login') }}" class="text-red-600 hover:underline">Volver al inicio de sesión</a>
     </div>
   </div>
+  
 </div>
 
 <script>  
+ function validarFormulario() {
+      let camposRequeridos = document.querySelectorAll("input[required], textarea[required]");
+      let errorAlert = document.getElementById("error-alert");
+      let formularioValido = true;
 
+      camposRequeridos.forEach((campo) => {
+          if (!campo.value.trim()) {
+              formularioValido = false;
+          }
+      });
+
+      if (!formularioValido) {
+          errorAlert.classList.remove("hidden"); // Mostrar mensaje de error
+          return false; // Evitar envío del formulario
+      }
+
+      return true; // Permitir el envío del formulario si todo está completo
+  }
+
+  function cerrarAlerta() {
+      document.getElementById("error-alert").classList.add("hidden");
+  }
 function formatearCedula() {
             let input = document.getElementById('cedula');
             let cedula = input.value.replace(/\D/g, ''); // Elimina todo lo que no sea número
@@ -144,7 +188,7 @@ function formatearCedula() {
             input.value = cedula; // Actualiza el valor con formato
         }
 
-   
+
  
         
 </script>

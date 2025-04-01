@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, jsonify, redirect, url_for, flash, g
+from flask import Flask, request, render_template, jsonify, redirect, url_for, flash, g, session
 from config import config
 from flask_mysqldb import MySQL
 from forms import LoginForm
@@ -73,8 +73,9 @@ def login():
 #Log Out
 @app.route('/logout')
 def logout():
-    logout_user()
-    return redirect(url_for('login'))
+    logout_user()  # Limpia la autenticación de Flask-Login
+    session.clear()  # Elimina todos los datos de sesión
+    return redirect(url_for('login'))  # Redirige al login
 
 @app.route('/protected')
 @login_required
@@ -219,10 +220,50 @@ def saldo_total(id_cliente):
     
     return total_saldo  # Devuelve un número en lugar de un string
 
-@app.route('/solicitar_producto')
-def solicitar_producto():
-    return render_template('solicitar_producto.html')
 
+
+@app.route('/solicitar_producto', methods=['GET', 'POST'])
+def solicitar_producto():
+    if request.method == 'POST':
+        #Aqui se validaran los datos para ser insertados en la base de datos.
+        
+    # Obtener el ID del cliente de current_user
+        if not hasattr(current_user, 'cliente'):
+            return jsonify({"error": "Usuario no tiene cliente asociado"}), 400
+        
+        idcliente = current_user.cliente['IdCliente']
+        print(f"DEBUG: IdCliente a insertar: {idcliente}")  # Verifica en consola
+        
+        idcliente = int(idcliente)  # Convertir a entero # ID del cliente (puedes obtenerlo de la sesión o de otra manera)
+        #idcliente = request.form['idcliente']  # ID del cliente (puedes obtenerlo de la sesión o de otra manera)
+        #idcliente = 1  # ID del cliente por defecto (puedes cambiarlo según tu lógica)
+        # Obtener los datos del formulario
+        tipo = str(request.form['tipocuenta'])  # Asegurar que sea string
+        saldo = float(request.form['monto'])  # Convertir a número decimal
+        descripcion = request.form.get('Descripcion', '').strip()  # Evitar None
+        fecha_apertura = datetime.now().strftime('%Y-%m-%d')  # Fecha actual
+        banco = 1  # ID del banco por defecto
+        Numero_de_Cuenta= generar_cuenta_fidebank()
+        
+        cursor = db.connection.cursor()
+        print(f"Intentando insertar cuenta para el cliente {idcliente}")
+        cursor.execute(
+            """INSERT INTO CUENTA
+            (TipoCuenta, Saldo, FechaApertura, IdCliente, IdBanco, Numero_de_Cuenta, descripccion) VALUES (%s,%s,%s,%s,%s,%s,%s) """,
+            (tipo, saldo, fecha_apertura, idcliente,banco, Numero_de_Cuenta, descripcion)
+        )
+        db.connection.commit()
+        print(f"Cuenta creada con éxito: {tipo} con saldo {saldo} y número de cuenta {Numero_de_Cuenta} para el cliente {idcliente}")
+        cursor.close()
+        
+        return jsonify({"success": f" Nueva cuenta creada: {Numero_de_Cuenta}"})
+        
+    return render_template('accounts/solicitar_producto.html')
+
+
+@app.route('/detalle_cuenta')
+def detalle_cuenta():
+    return render_template('accounts/detalle_cuenta.html')
 # Ruta para acceder a la sección de tarjetas
 @app.route('/tarjetas')
 def tarjetas():

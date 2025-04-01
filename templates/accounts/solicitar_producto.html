@@ -1,0 +1,185 @@
+{%  extends './base.html '%}
+
+
+{% block header %}
+<header style="padding-bottom: 0rem" class="bg-white shadow py-4">
+    <div class="container mx-auto flex justify-between items-center">
+      <!-- Logo y Nombre -->
+      <div class="flex items-left space-x-0">
+        <img src="../static/styles/FidebankLogo.png" alt="Fidebank Logo" class="h-12 w-auto" />
+        <h3 style="line-height: 5rem; font-size: 1.5rem; color: rgb(248 8 8);" class="font-semibold ml-4">
+          
+        </h3>
+      </div>
+  
+      <!-- Menú de navegación -->
+      <nav>
+        <ul class="flex space-x-6">
+            <li>
+                <a href="{{ url_for('home') }}" class="text-black hover:text-red-600">
+                    <i class="fas fa-home"></i> Inicio
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('cuentas') }}" class="text-black hover:text-red-600">
+                    <i class="fas fa-wallet"></i> Cuentas
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('transferir') }}" class="text-black hover:text-red-600">
+                    <i class="fas fa-exchange-alt"></i> Transferencias
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('actividad') }}" class="text-black hover:text-red-600">
+                    <i class="fas fa-list-alt"></i> Movimientos
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('acerca_de') }}" class="text-black hover:text-red-600">
+                    <i class="fas fa-info-circle"></i> Acerca de Nosotros
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+  
+      <!-- Botón de Logout -->
+      <a class="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50" 
+         href="{{ url_for('logout') }}">
+        Logout
+      </a>
+    </div>
+  </header>
+  
+{% endblock %}
+
+{% block body%}
+
+<div class="container mx-auto mt-8 p-4 bg-white shadow-md rounded-lg">
+    <h1 class="text-2xl font-bold mb-4">Solicitar Cuenta</h1>
+   <br>
+    <p class="text-gray-600 mb-4">En el siguiente formulario se le estara presentando una serie de productos propios de Fidebank, si quiere saber mas de cada unos de los productos de manera mas profunda, le recomendamos leerse el <spam class=" text-red-600">Politicas de productos.</spam> </spam></p>
+    <p class="text-gray-600 mb-4">Recuerde que el producto que seleccione sera el producto que se le activara en su cuenta.</p>
+    <p class="text-gray-500 mx-* " > El monto acordado se le descontara de su cuenta pricipal.</p>
+    <h3 class="text-lg font-semibold mb-2 text-black-300">Seleccione el tipo de cuenta que desea solicitar:</h3>
+    
+    <form action="{{url_for('solicitar_producto')}}" method="POST" class="grid grid-cols-1 sm:grid-cols-2 gap-4" autocomplete="off">
+        <!-- CSRF Token for security -->
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <!-- IDCLIENTE -->
+        <input type="hidden" name="idcliente" value="{{ idcliente }}">
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="p-3 mb-4 text-white rounded-md bg-{{ 'red' if category == 'error' else 'green' }}-500">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <!-- Fila 1: Tipo de Producto -->
+        <div class="flex items-center">
+          <label for="tipo_producto" class="block text-gray-700 font-bold w-1/3">Tipo de Producto:</label>
+          <select class="flex-1 p-2 border border-gray-300 rounded" id="tipocuenta" name="tipocuenta">
+            <option value="ahorro">Ahorros</option>
+            <option value="corriente">Corriente</option>
+          
+          </select>
+        </div>
+      
+        <!-- Fila 2: Descripción -->
+        <div class="flex">
+          <label for="Descripcion" class="block text-gray-700 font-bold w-1/5">Descripción:</label>
+          <textarea class="flex-1 p-2 border border-gray-300 rounded resize-none" id="Descripcion" name="Descripcion" rows="4" placeholder="Descripción"></textarea>
+        </div>
+      
+        <!-- Fila 3: Monto -->
+        <div class="flex items-center">
+          <label for="monto" class="block text-gray-700 font-bold w-1/3">Monto:</label>
+          <input type="number"     step="0.01" min="0" max="99999999.99" class="flex-1 p-2 border border-gray-300 rounded" id="monto" name="monto" placeholder="Monto" required>
+          <p class="text-gray-500 ml-2">DOP</p>
+          
+         
+         
+        </div>
+        
+        <!-- Fila 4: Botón de envío (ocupa ambas columnas) -->
+        <div class="sm:col-span-2 flex justify-right mt-6">
+          <button type="submit" class="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+            Solicitar Producto
+          </button>
+         
+        </div>
+      </form>
+
+</div>
+
+
+<!-- Importar SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.querySelector("form");
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault(); // Evita el envío tradicional del formulario
+
+      const formData = new FormData(form);
+
+      fetch("{{ url_for('solicitar_producto') }}", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          Swal.fire({
+            title: "¡Cuenta creada!",
+            text: data.success,
+            icon: "success",
+            confirmButtonText: "Aceptar"
+          }).then(() => {
+            window.location.href = "{{ url_for('cuentas') }}";
+          });
+        } else {
+          Swal.fire({
+            title: "Error",
+            text: data.error,
+            icon: "error",
+            confirmButtonText: "Intentar de nuevo"
+          });
+        }
+      })
+      .catch(error => {
+        Swal.fire({
+          title: "Error inesperado",
+          text: "Ocurrió un error. Inténtalo más tarde.",
+          icon: "error",
+          confirmButtonText: "OK"
+        });
+      });
+    });
+  });
+
+  document.getElementById("monto").addEventListener("input", function () {
+    let max = 99999999.99;
+    let min = 0;
+    let value = parseFloat(this.value);
+
+    if (value > max) {
+        this.value = max;
+    } else if (value < min) {
+        this.value = min;
+    }
+});
+
+
+
+</script>
+
+{% endblock%}
