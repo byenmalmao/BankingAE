@@ -212,9 +212,9 @@ def cuentas():
     # The accounts are already loaded in current_user.cuentas
     return render_template('cuentas.html', cuentas=current_user.cuenta)
 
-def saldo_total(id_cliente):
+def saldo_total(id):
     cursor = db.connection.cursor()
-    cursor.execute("SELECT COALESCE(SUM(Saldo), 0) FROM cuenta WHERE IdCliente = %s", (id_cliente,))
+    cursor.execute("SELECT COALESCE(SUM(Saldo), 0) FROM cuenta WHERE IdCliente = %s", (id,))
     total_saldo = cursor.fetchone()[0]  # Obtener el resultado de la consulta
     cursor.close()
     
@@ -261,9 +261,28 @@ def solicitar_producto():
     return render_template('accounts/solicitar_producto.html')
 
 
-@app.route('/detalle_cuenta')
+@app.route('/detalle_cuenta', methods=['POST', 'GET'])
+@login_required
 def detalle_cuenta():
-    return render_template('accounts/detalle_cuenta.html')
+    
+    numero = request.args.get('numero')
+    cuenta = obtener_cuenta_por_id(numero)
+    return render_template('accounts/detalle_cuenta.html', cuenta=cuenta)
+
+
+def obtener_cuenta_por_id(numero):
+    cursor = db.connection.cursor()
+    cursor.execute("SELECT * FROM cuenta WHERE Numero_de_Cuenta = %s", (numero,))
+    row = cursor.fetchone()
+    cursor.close()
+    
+    if row:
+        columnas = ["IdCuenta", "IdCliente", "IdBanco", "TipoCuenta", "Saldo", "FechaApertura", "Estado", "Numero_de_Cuenta", "Descripccion"]
+        cuenta = dict(zip(columnas, row))
+        return cuenta
+    
+    return None
+
 # Ruta para acceder a la sección de tarjetas
 @app.route('/tarjetas')
 def tarjetas():
