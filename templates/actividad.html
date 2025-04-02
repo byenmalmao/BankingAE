@@ -1,25 +1,109 @@
 {% extends 'base.html' %}
 
+
 {% block body %}
-<h1>TRANSACTION LOG</h1>
-<div class="all_users" style="height: 500px;">
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>SENDER</th>
-            <th>RECEIVER</th>
-            <th>AMOUNT</th>
-            <th>DATE & TIME</th>
-        </tr>
-        {% for transaction in transactions %}
-        <tr>
-            <td>{{ transaction.id }}</td>
-            <td>{{ transaction.sender }}</td>
-            <td>{{ transaction.receiver }}</td>
-            <td>{{ transaction.amount }}</td>
-            <td>{{ transaction.time }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-6">Actividad Reciente</h1>
+     
+    <!-- Filtros -->
+    <div class="bg-white shadow-md rounded-lg p-4 mb-6">
+        <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Desde</label>
+                <input type="date" name="fecha_inicio" value="{{ fecha_inicio }}"
+                       class="mt-1 block w-full p-2 border rounded-md">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Hasta</label>
+                <input type="date" name="fecha_fin" value="{{ fecha_fin }}"
+                       class="mt-1 block w-full p-2 border rounded-md">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Tipo</label>
+                <select name="tipo" class="mt-1 block w-full p-2 border rounded-md">
+                    {% for tipo in tipos %}
+                        <option value="{{ tipo }}" {% if tipo == tipo_seleccionado %}selected{% endif %}>
+                            {{ tipo }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="flex items-end">
+                <button type="submit" 
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md">
+                    Filtrar
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Resultados -->
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        {% if transacciones %}
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monto</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cuenta Origen</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cuenta Destino</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Detalle</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for t in transacciones %}
+    <tr>
+        <td class="px-6 py-4 whitespace-nowrap">
+            {{ t[1] }}  <!-- Fecha -->
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">{{ t[2] }}</td>  <!-- Tipo -->
+        <td class="px-6 py-4 whitespace-nowrap {% if t[2] == 'Depósito' %}text-green-600{% else %}text-red-600{% endif %}">
+            RD$ {{ t[3] }}  <!-- Monto -->
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">{{ t[5] }}</td>  <!-- Cuenta Origen -->
+        <td class="px-6 py-4 whitespace-nowrap">{{ t[6] }}</td>  <!-- Cuenta Destino -->
+        <td class="px-6 py-4">{{ t[4] }}</td>  <!-- Descripción -->
+    </tr>
+    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Paginación -->
+            {% if total > per_page %}
+            <div class="mt-4 flex justify-between items-center px-6 py-3 bg-gray-50">
+                <div>
+                    <p class="text-sm text-gray-700">
+                        Mostrando {{ ((page - 1) * per_page) + 1 }} a 
+                        {{ [page * per_page, total]|min }} de {{ total }} registros
+                    </p>
+                </div>
+                <div class="flex space-x-2">
+                    <a href="{{ url_for('actividad', page=page-1, **request_args) }}"
+                       class="px-4 py-2 border rounded-md {% if page == 1 %}bg-gray-100 cursor-not-allowed{% else %}hover:bg-gray-50{% endif %}"
+                       {% if page == 1 %}disabled{% endif %}>
+                        Anterior
+                    </a>
+                    <a href="{{ url_for('actividad', page=page+1, **request_args) }}"
+                       class="px-4 py-2 border rounded-md {% if page * per_page >= total %}bg-gray-100 cursor-not-allowed{% else %}hover:bg-gray-50{% endif %}"
+                       {% if page * per_page >= total %}disabled{% endif %}>
+                        Siguiente
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="px-6 py-4 text-center text-gray-500">
+                No se encontraron transacciones con los filtros seleccionados
+            </div>
+        {% endif %}
+    </div>
 </div>
+<!-- Temporal: Ver datos crudos -->
+<div class="debug hidden">
+    <h3>Datos de Transacciones (crudos):</h3>
+    <pre>{{ transacciones|tojson|safe }}</pre>
+</div>
+
+
 {% endblock %}

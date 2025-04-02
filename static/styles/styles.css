@@ -119,3 +119,9 @@ footer .footer-section ul li:last-child {
 .Btn:active {
   transform: translate(2px ,2px);
 }
+.debug {
+  background: #f0f0f0;
+  padding: 1rem;
+  margin: 1rem 0;
+  border: 1px solid #ddd;
+}

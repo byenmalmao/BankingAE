@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash
 from flask_wtf.csrf import CSRFProtect
 from flask_login import  LoginManager,login_user,login_required,logout_user
 from flask_login import current_user 
-from datetime import datetime
+from datetime import datetime, timedelta
 from generarcuenta import generar_cuenta_fidebank
 
 from models.ModelUser import ModelUser
@@ -199,10 +199,7 @@ def register():
 
 
 ##################################################################################
-# Ruta para la página de actividad (transacciones realizadas)
-@app.route('/actividad')
-def actividad():
-    return render_template('actividad.html')
+
 
 # Ruta para ver todas las cuentas registradas
 @app.route('/cuentas')
@@ -299,15 +296,277 @@ def About():
     return render_template('about.html')
 
 # Ruta para realizar transferencias
-@app.route('/transferir')
-def transferir():
-    return render_template('transferir.html')
 
+@app.route('/transferir', methods=['GET', 'POST'])
+@login_required
+def transferir():
+    if request.method == 'POST':
+        try:
+            cuenta_origen = request.form['cuenta_origen']
+            cuenta_destino = request.form['cuenta_destino']
+            monto = float(request.form['monto'])
+            descripcion = request.form.get('descripcion', 'Transferencia')
+
+            cur = db.connection.cursor()
+
+            # 1. Obtener IdCliente del usuario actual
+            cur.execute("""
+                SELECT IdCliente FROM cliente 
+                WHERE IdUsuario = %s
+            """, (current_user.id,))
+            cliente = cur.fetchone()
+            
+            if not cliente:
+                flash('Cliente no encontrado', 'error')
+                return redirect(url_for('transferir'))
+                
+            id_cliente = cliente[0]
+
+            # 2. Verificar cuenta origen (pertenece al cliente)
+            cur.execute("""
+                SELECT IdCuenta, Saldo 
+                FROM cuenta 
+                WHERE Numero_de_Cuenta = %s AND IdCliente = %s
+            """, (cuenta_origen, id_cliente))
+            origen = cur.fetchone()
+
+            if not origen:
+                flash('Cuenta origen no válida', 'error')
+                return redirect(url_for('transferir'))
+
+            id_origen, saldo = origen
+
+            # 3. Verificar cuenta destino (solo que exista)
+            cur.execute("""
+                SELECT IdCuenta 
+                FROM cuenta 
+                WHERE Numero_de_Cuenta = %s
+            """, (cuenta_destino,))
+            destino = cur.fetchone()
+
+            if not destino:
+                flash('Cuenta destino no existe', 'error')
+                return redirect(url_for('transferir'))
+
+            id_destino = destino[0]
+
+            # Validaciones
+            if id_origen == id_destino:
+                flash('No puedes transferir a la misma cuenta', 'error')
+                return redirect(url_for('transferir'))
+
+            if saldo < monto:
+                flash('Saldo insuficiente', 'error')
+                return redirect(url_for('transferir'))
+
+            # Realizar transferencia
+            db.connection.begin()
+            
+            # Restar de origen
+            cur.execute("""
+                UPDATE cuenta 
+                SET Saldo = Saldo - %s 
+                WHERE IdCuenta = %s
+            """, (monto, id_origen))
+            
+            # Sumar a destino
+            cur.execute("""
+                UPDATE cuenta 
+                SET Saldo = Saldo + %s 
+                WHERE IdCuenta = %s
+            """, (monto, id_destino))
+            
+            # Registrar transacción
+            cur.execute("""
+                INSERT INTO transaccion (
+                    IdCuentaOrigen, IdCuentaDestino, TipoTransaccion, 
+                    Monto, FechaHora, Descripcion
+                ) VALUES (%s, %s, 'Transferencia', %s, NOW(), %s)
+            """, (id_origen, id_destino, monto, descripcion))
+            
+            db.connection.commit()
+            flash('Transferencia exitosa', 'success')
+            return redirect(url_for('transferir'))
+
+        except Exception as e:
+            db.connection.rollback()
+            flash(f'Error: {str(e)}', 'error')
+            return redirect(url_for('transferir'))
+        finally:
+            cur.close()
+
+    # GET: Mostrar formulario
+    cur = db.connection.cursor()
+    
+    # Obtener IdCliente primero
+    cur.execute("SELECT IdCliente FROM cliente WHERE IdUsuario = %s", (current_user.id,))
+    cliente = cur.fetchone()
+    
+    if not cliente:
+        flash('Cliente no encontrado', 'error')
+        return redirect(url_for('home'))
+    
+    # Obtener cuentas del cliente
+    cur.execute("""
+        SELECT Numero_de_Cuenta 
+        FROM cuenta 
+        WHERE IdCliente = %s AND Estado = 'Activa'
+    """, (cliente[0],))
+    cuentas = [row[0] for row in cur.fetchall()]
+    cur.close()
+
+    return render_template('transferir.html', cuentas=cuentas)
+
+@app.route('/depositar', methods=['GET', 'POST'])
+def depositar():
+    if request.method == 'POST':
+        numero_cuenta = request.form['numero_cuenta']
+        monto = float(request.form['monto'])
+
+        cursor = db.connection.cursor()
+
+        # Verificar si la cuenta existe
+        cursor.execute("SELECT IdCuenta FROM cuenta WHERE Numero_de_Cuenta = %s", (numero_cuenta,))
+        cuenta = cursor.fetchone()
+
+        if not cuenta:
+            flash('Número de cuenta no válido', 'error')
+            return redirect(url_for('depositar'))
+
+        id_cuenta = cuenta[0]
+
+        # Realizar el depósito
+        try:
+            cursor.execute("UPDATE cuenta SET Saldo = Saldo + %s WHERE IdCuenta = %s", (monto, id_cuenta))
+            
+            # Registrar la transacción
+            cursor.execute("""
+                INSERT INTO transaccion (IdCuentaOrigen, TipoTransaccion, Monto, FechaHora, Descripcion) 
+                VALUES (%s, 'Depósito', %s, %s, %s)
+            """, (id_cuenta, monto, datetime.now(), "Depósito realizado"))
+            
+            db.connection.commit()
+            flash('Depósito realizado con éxito', 'success')
+        except Exception as e:
+            db.connection.rollback()
+            flash(f"Error en la transacción: {str(e)}", 'error')
+
+        return redirect(url_for('depositar'))
+
+    return render_template('depositar.html')
 # Ruta para la seccion de contactanos.
 @app.route('/contactanos')
 def contactanos():
     return render_template('contactanos.html')
+@app.route('/actividad')
+@login_required
+def actividad():
+    # Inicializar variables esenciales
+    transacciones = []
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
+    total = 0
+    tipos = []
+    
+    try:
+        # Obtener parámetros de filtro
+        fecha_inicio = request.args.get('fecha_inicio')
+        fecha_fin = request.args.get('fecha_fin')
+        tipo_transaccion = request.args.get('tipo', 'Todas')
 
+        # Obtener conexión a la base de datos
+        cur = db.connection.cursor()
+        
+        # 1. Obtener ID del cliente
+        cur.execute("""
+            SELECT c.IdCliente 
+            FROM cliente c
+            JOIN usuario u ON c.IdUsuario = u.IdUsuario
+            WHERE u.IdUsuario = %s
+        """, (current_user.id,))
+        cliente = cur.fetchone()
+
+        if not cliente:
+            flash('Cliente no encontrado', 'error')
+            return redirect(url_for('home'))
+
+        id_cliente = cliente[0]
+
+        # 2. Construir consulta base
+        query = """
+            SELECT 
+                t.IdTransaccion,
+                t.FechaHora,
+                t.TipoTransaccion,
+                t.Monto,
+                t.Descripcion,
+                co.Numero_de_Cuenta AS CuentaOrigen,
+                cd.Numero_de_Cuenta AS CuentaDestino
+            FROM transaccion t
+            LEFT JOIN cuenta co ON t.IdCuentaOrigen = co.IdCuenta
+            LEFT JOIN cuenta cd ON t.IdCuentaDestino = cd.IdCuenta
+            WHERE (co.IdCliente = %s OR cd.IdCliente = %s)
+        """
+        params = [id_cliente, id_cliente]
+
+        # 3. Aplicar filtros
+        if fecha_inicio:
+            query += " AND t.FechaHora >= %s"
+            params.append(fecha_inicio)
+        
+        if fecha_fin:
+            query += " AND t.FechaHora <= %s"
+            params.append(f"{fecha_fin} 23:59:59")
+        
+        if tipo_transaccion != 'Todas':
+            query += " AND t.TipoTransaccion = %s"
+            params.append(tipo_transaccion)
+
+        # 4. Contar total de registros
+        count_query = f"SELECT COUNT(*) FROM ({query}) AS subquery"
+        cur.execute(count_query, params)
+        total = cur.fetchone()[0]
+
+        # 5. Obtener datos paginados
+        data_query = query + " ORDER BY t.FechaHora DESC LIMIT %s OFFSET %s"
+        params.extend([per_page, (page - 1) * per_page])
+        cur.execute(data_query, params)
+        transacciones = cur.fetchall()
+
+        # 6. Obtener tipos de transacción disponibles
+        cur.execute("""
+            SELECT DISTINCT TipoTransaccion 
+            FROM transaccion t
+            JOIN cuenta c ON t.IdCuentaOrigen = c.IdCuenta OR t.IdCuentaDestino = c.IdCuenta
+            WHERE c.IdCliente = %s
+        """, (id_cliente,))
+        tipos = ['Todas'] + [row[0] for row in cur.fetchall()]
+
+        # 7. Configurar fechas por defecto
+        fecha_fin_default = datetime.now().strftime('%Y-%m-%d')
+        fecha_inicio_default = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
+
+    except Exception as e:
+        flash(f'Error al obtener actividad: {str(e)}', 'error')
+        return redirect(url_for('home'))
+    
+    finally:
+        if 'cur' in locals():
+            cur.close()
+
+    # 8. Renderizar plantilla (fuera del try-except para garantizar el return)
+    return render_template(
+        'actividad.html',
+        transacciones=transacciones,
+        page=page,
+        per_page=per_page,
+        total=total,
+        tipos=tipos,
+        tipo_seleccionado=tipo_transaccion,
+        fecha_inicio=fecha_inicio if fecha_inicio else fecha_inicio_default,
+        fecha_fin=fecha_fin if fecha_fin else fecha_fin_default,
+        request_args=request.args
+    )
 ##################################################################################
 
 if __name__ == '__main__':
