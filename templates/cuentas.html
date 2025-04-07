@@ -2,16 +2,16 @@
 
 {% block body %}
 <h1 class="text-center text-2xl font-bold mt-8">Cuentas</h1>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+<div class="grid grid-cols-1 p-8 md:grid-cols-2 lg:grid-cols-3 gap-4">
   {% for cuenta in cuentas %}
     <div class="bg-white shadow-md  rounded-lg p-6 border rounded-md hover:border-red-500 focus:ring-2 focus:ring-red-400 transition">
       <h2 class="text-xl font-semibold mb-2">Cuenta </h2>
       <p class=" text-gray-700 hover:text-red-600 mt-2 text-center cursor-pointer hover:underline" id="textoCopiable"  onclick="copiarTexto(this)" ><strong>{{ cuenta.numero }}</strong></p>
-      <p><strong>Tipo:</strong> {{ cuenta.tipo }}</p>
+     <p><strong>Tipo:</strong> {{ cuenta.tipo }}</p>
       <p><strong>Saldo:</strong> ${{ "%.2f"|format(cuenta.saldo) }}</p>
-      <p><strong>Fecha de Apertura:</strong> {{ cuenta.fecha_apertura.strftime('%Y-%m-%d') if cuenta.fecha_apertura else 'N/A' }}</p>
+     <!-- <p><strong>Fecha de Apertura:</strong> {{ cuenta.fecha_apertura.strftime('%Y-%m-%d') if cuenta.fecha_apertura else 'N/A' }}</p>
       <p><strong>Estado:</strong> {{ cuenta.estado }}</p>
-      <p><strong>ID:</strong> {{cuenta.Id }}</p>
+      <p><strong>ID:</strong> {{cuenta.Id }}</p> -->
       <!-- From Uiverse.io by vinodjangid07 --> 
 <a href="{{ url_for('detalle_cuenta', numero=cuenta.numero)}}" class="Btn justify-right">
   <div class="sign">
