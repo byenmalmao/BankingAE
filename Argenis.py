@@ -18,7 +18,7 @@ app = Flask(__name__)
 # Configuración de la base de datos
 app.config['MYSQL_HOST'] = 'localhost'     #Recordar cambiar con sus datos 
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'Bismuto888@#'
+
 app.config['MYSQL_DB'] = 'fidebank'
 
 app.secret_key = 'mysecretkey'
